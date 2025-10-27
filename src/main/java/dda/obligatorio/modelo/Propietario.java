@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Propietario {
+public class Propietario extends Usuario {
 
-    private String cedula;
-    private String contrasena;
-    private String nombreCompleto;
     private double saldoActual;
     private double saldoMinimo;
     private Estado estadoActual;
@@ -17,46 +14,21 @@ public class Propietario {
     private List<Notificacion> notificaciones;
 
     public Propietario(String cedula, String contrasena, String nombreCompleto, 
-                       double saldoActual, double saldoMinimo) {
-        this.cedula = cedula;
-        this.contrasena = contrasena;
-        this.nombreCompleto = nombreCompleto;
+                      double saldoActual, double saldoMinimo) {
+        super(cedula, contrasena, nombreCompleto);
         this.saldoActual = saldoActual;
         this.saldoMinimo = saldoMinimo;
-        this.estadoActual = new Estado(Estado.HABILITADO);
+        this.estadoActual = new Estado(Estado.HABILITADO); // Estado por defecto
         this.vehiculos = new ArrayList<>();
         this.asignaciones = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
+    }
     
-        
-    
-    
+    @Override
+    public String getTipoUsuario() {
+        return "Propietario";
     }
 
-    public String getCedula() {
-        return cedula;
-    }
-    
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
-    
-    public String getContrasena() {
-        return contrasena;
-    }
-    
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-    
-    public String getNombreCompleto() {
-        return nombreCompleto;
-    }
-    
-    public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
-    }
-    
     public double getSaldoActual() {
         return saldoActual;
     }
@@ -113,7 +85,7 @@ public class Propietario {
         this.asignaciones.add(asignacion);
     }
 
-     public void agregarNotificacion(Notificacion notificacion) {
+    public void agregarNotificacion(Notificacion notificacion) {
         this.notificaciones.add(notificacion);
     }
 
@@ -124,7 +96,6 @@ public class Propietario {
     public boolean descontarSaldo(double monto) {
         if (tieneSaldoSuficiente(monto)) {
             this.saldoActual -= monto;
-            
             
             if (this.saldoActual < this.saldoMinimo) {
                 generarAlertaSaldo();
@@ -147,7 +118,7 @@ public class Propietario {
         agregarNotificacion(alerta);
     }
 
-    public Bonificacion obtenerBonificacionParaPuesto(Puesto puesto) {
+     public Bonificacion obtenerBonificacionParaPuesto(Puesto puesto) {
         for (Asignacion asig : asignaciones) {
             if (asig.getPuesto().equals(puesto)) {
                 return asig.getBonificacion();
@@ -173,16 +144,7 @@ public class Propietario {
 
     @Override
     public String toString() {
-        return "Propietario [" + cedula + ", " + nombreCompleto + ", Estado: " + 
-               estadoActual + ", Saldo: $" + saldoActual + "]";
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Propietario prop = (Propietario) obj;
-        return cedula.equals(prop.cedula);
+        return super.toString() + " [Estado: " + estadoActual + ", Saldo: $" + saldoActual + "]";
     }
 
 
