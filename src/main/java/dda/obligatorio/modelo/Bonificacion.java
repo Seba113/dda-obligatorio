@@ -1,13 +1,11 @@
 package dda.obligatorio.modelo;
 
-public class Bonificacion {
+import java.util.Calendar;
+import java.util.List;
+
+public abstract class Bonificacion {
 
     private String nombre;
-    
-    // Constantes para los tipos de bonificación
-    public static final String EXONERADOS = "Exonerados";
-    public static final String FRECUENTES = "Frecuentes";
-    public static final String TRABAJADORES = "Trabajadores";
 
     public Bonificacion(String nombre) {
         this.nombre = nombre;
@@ -21,23 +19,18 @@ public class Bonificacion {
         this.nombre = nombre;
     }
 
-    public double aplicarDescuento(double montoBase) {
-        switch (this.nombre) {
-            case EXONERADOS:
-                return 0; // No pagan
-            case FRECUENTES:
-                return montoBase * 0.5; // 50% de descuento
-            case TRABAJADORES:
-                return montoBase * 0.2; // 80% de descuento
-            default:
-                return montoBase;
-        }
-    }
+    public abstract double aplicarDescuento(double montoBase, Vehiculo vehiculo, 
+                                           Puesto puesto, List<Transito> transitosAnteriores);
+
     
+                                           
     @Override
     public String toString() {
         return nombre;
     }
+
+    public abstract boolean aplica(Vehiculo vehiculo, Puesto puesto, 
+                                   List<Transito> transitosAnteriores);
     
     @Override
     public boolean equals(Object obj) {
@@ -45,6 +38,17 @@ public class Bonificacion {
         if (obj == null || getClass() != obj.getClass()) return false;
         Bonificacion bonif = (Bonificacion) obj;
         return nombre.equals(bonif.nombre);
+    }
+
+    protected boolean esMismoDia(Calendar fecha1, Calendar fecha2) {
+        return fecha1.get(Calendar.YEAR) == fecha2.get(Calendar.YEAR) &&
+               fecha1.get(Calendar.DAY_OF_YEAR) == fecha2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    protected boolean esDiaSemana() {
+        Calendar cal = Calendar.getInstance();
+        int dia = cal.get(Calendar.DAY_OF_WEEK);
+        return dia >= Calendar.MONDAY && dia <= Calendar.FRIDAY;
     }
     
 }

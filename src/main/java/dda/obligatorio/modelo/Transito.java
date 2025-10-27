@@ -61,7 +61,7 @@ public class Transito {
 
     public void aplicarBonificacion(Bonificacion bonificacion) {
         if (tarifaCobrada != null && bonificacion != null) {
-            this.montoFinal = bonificacion.aplicarDescuento(tarifaCobrada.getMonto());
+            this.montoFinal = bonificacion.aplicarDescuento(tarifaCobrada.getMonto(), vehiculo, puesto, null);
         }
     }
     
