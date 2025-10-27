@@ -19,7 +19,7 @@ public abstract class Usuario {
         this.cedula = cedula;
     }
     
-    public String getContrasena() {
+    public String getPassword() {
         return password;
     }
     
