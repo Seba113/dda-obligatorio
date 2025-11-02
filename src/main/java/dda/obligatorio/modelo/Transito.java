@@ -1,6 +1,7 @@
 package dda.obligatorio.modelo;
 
 import java.util.Date;
+import observador.Observable;
 
 public class Transito {
     
