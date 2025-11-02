@@ -25,6 +25,10 @@ public class SistemaGestionAcceso {
             "Segundo Propietario", 1500, 400));
     }
 
+    public void logout(Usuario u){
+        // Implement logout logic if needed, or leave empty if not applicable
+    }
+
      public boolean registrarAdministrador(String cedula, String contrasena, String nombreCompleto) {
         if (existeUsuario(cedula)) {
             return false;
