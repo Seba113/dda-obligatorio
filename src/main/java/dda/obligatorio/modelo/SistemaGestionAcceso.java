@@ -39,18 +39,18 @@ public class SistemaGestionAcceso {
         return true;
     }
 
-    public Administrador loginAdministrador(String nom, String pwd) throws PeajeException {
-        Administrador admin = (Administrador) login(nom, pwd, administradores);
+    public Administrador loginAdministrador(String cedula, String pwd) throws PeajeException {
+        Administrador admin = (Administrador) login(cedula, pwd, administradores);
          if(admin==null) throw new PeajeException("Login incorrecto");
        return admin;
     }
 
-    private Usuario login(String nom, String pwd, ArrayList lista){
+    private Usuario login(String cedula, String pwd, ArrayList lista){
         Usuario usuario;
         
         for(Object o:lista){
             usuario = (Usuario)o;
-            if(usuario.getNombreCompleto().equals(nom) && usuario.getPassword().equals(pwd)){
+            if(usuario.getCedula().equals(cedula) && usuario.getPassword().equals(pwd)){
                 return usuario;
             }
         }
@@ -86,9 +86,12 @@ public class SistemaGestionAcceso {
         return buscarAdministrador(cedula) != null || buscarPropietario(cedula) != null;
     }
 
-    public Propietario loginPropietario(String nom, String pwd) throws PeajeException {
-         Propietario prop = (Propietario) login(nom, pwd, propietarios);
-         if(prop==null) throw new PeajeException("Login incorrecto");
+    public Propietario loginPropietario(String cedula, String pwd) throws PeajeException {
+         Propietario prop = (Propietario) login(cedula, pwd, propietarios);
+         if(prop==null) throw new PeajeException("Acceso denegado");
+         if(prop.getEstadoActual().getNombre().equals(Estado.DESHABILITADO)){
+             throw new PeajeException("Usuario deshabilitado. No puede ingresar al sistema.");
+         }
         return prop;
     }
 

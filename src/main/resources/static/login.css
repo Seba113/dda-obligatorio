@@ -19,6 +19,12 @@ body {
     max-width: 400px;
 }
 
+.pLogin {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #666;
+}
+
 h2 {
     text-align: center;
     color: #333;
