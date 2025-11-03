@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Propietarios</title>
+    <style href="panel-propietarios.css"></style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Tablero de control del propietario</h1>
+            <button class="btn-salir" onclick="salir()">Salir</button>
+        </div>
+        
+        <!-- Resumen del propietario -->
+        <div class="section">
+            <div class="section-title">Resumen del propietario</div>
+            <div class="resumen">
+                <div class="resumen-item">
+                    <span class="resumen-label">Nombre Completo</span>
+                    <span class="resumen-value" id="nombrePropietario">Juan Pérez</span>
+                </div>
+                <div class="resumen-item">
+                    <span class="resumen-label">Estado</span>
+                    <span class="resumen-value estado-activo" id="estadoPropietario">Activo</span>
+                </div>
+                <div class="resumen-item">
+                    <span class="resumen-label">Saldo Actual</span>
+                    <span class="resumen-value saldo-amount" id="saldoPropietario">$ 2.540,00</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Grid: Bonificaciones y Vehículos -->
+        <div class="grid-2col">
+            <!-- Bonificaciones asignadas -->
+            <div class="section">
+                <div class="section-title">Bonificaciones asignadas</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bonificación</th>
+                            <th>Puesto</th>
+                            <th>Fecha asignada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBonificaciones">
+                        <tr>
+                            <td>Programa Frecuente</td>
+                            <td>Peaje Norte</td>
+                            <td>2025-01-12</td>
+                        </tr>
+                        <tr>
+                            <td>Exonerados</td>
+                            <td>Peaje Centro</td>
+                            <td>2025-01-03</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Vehículos registrados -->
+            <div class="section">
+                <div class="section-title">Vehículos registrados</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Modelo</th>
+                            <th>Color</th>
+                            <th>Tránsitos</th>
+                            <th>Monto total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaVehiculos">
+                        <tr>
+                            <td>SAR1234</td>
+                            <td>sedan</td>
+                            <td>Azul</td>
+                            <td>12</td>
+                            <td class="monto-positivo">$ 1.240,00</td>
+                        </tr>
+                        <tr>
+                            <td>SCD5678</td>
+                            <td>SUV</td>
+                            <td>Gris</td>
+                            <td>4</td>
+                            <td class="monto-positivo">$ 885,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Tránsitos realizados -->
+        <div class="section">
+            <div class="section-title">Tránsitos realizados</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Puesto</th>
+                        <th>Matrícula</th>
+                        <th>Tarifa</th>
+                        <th>Monto tarifa</th>
+                        <th>Bonificación</th>
+                        <th>Monto bonificación</th>
+                        <th>Monto pagado</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaTransitos">
+                    <tr>
+                        <td>Peaje Sur</td>
+                        <td>SAR1234</td>
+                        <td>Tarifa básica</td>
+                        <td>$ 120,00</td>
+                        <td>Frecuente</td>
+                        <td class="monto-negativo">-$ 24,00</td>
+                        <td class="monto-positivo">$ 96,00</td>
+                        <td>2025-09-19</td>
+                        <td>18:43</td>
+                    </tr>
+                    <tr>
+                        <td>Peaje Norte</td>
+                        <td>SCD5678</td>
+                        <td>tarifa plus</td>
+                        <td>$ 150,00</td>
+                        <td>Exonerado</td>
+                        <td class="monto-negativo">-$ 36,00</td>
+                        <td class="monto-positivo">$ 114,00</td>
+                        <td>2025-09-18</td>
+                        <td>08:22</td>
+                    </tr>
+                    <tr>
+                        <td>Peaje Centro</td>
+                        <td>SAR1234</td>
+                        <td>Tarifa básica</td>
+                        <td>$ 120,00</td>
+                        <td>Frecuente</td>
+                        <td class="monto-negativo">-$ 24,00</td>
+                        <td class="monto-positivo">$ 96,00</td>
+                        <td>2025-09-17</td>
+                        <td>19:01</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Notificaciones del sistema -->
+        <div class="section">
+            <div class="notificaciones-header">
+                <div class="section-title" style="margin: 0; padding: 0; border: none;">Notificaciones del sistema</div>
+                <button class="btn-borrar" onclick="borrarNotificaciones()">Borrar notificaciones</button>
+            </div>
+            <div id="listaNotificaciones">
+                <div class="notificacion-item">
+                    <div class="notificacion-fecha">2025-09-19 19:00</div>
+                    <div class="notificacion-mensaje">Nuevo tránsito registrado (SAR1234 - Peaje Sur)</div>
+                </div>
+                <div class="notificacion-item">
+                    <div class="notificacion-fecha">2025-09-18 03:23</div>
+                    <div class="notificacion-mensaje">Bonificación frecuente aplicada (SCD5678)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
