@@ -2,6 +2,9 @@ package dda.obligatorio.modelo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Clase Fachada que implementa el patrón Facade para proporcionar una interfaz unificada
@@ -55,6 +58,10 @@ public class Fachada {
         return sistemaAcceso.obtenerPropietarios();
     }
 
+    public Propietario buscarPropietario(String cedula) {
+        return sistemaAcceso.buscarPropietario(cedula);
+    }
+
     public boolean existeUsuario(String cedula) {
         return sistemaAcceso.existeUsuario(cedula);
     }
@@ -99,6 +106,12 @@ public class Fachada {
     public double calcularTotalRecaudado() {
         return sistemaTransitos.calcularTotalRecaudado();
     }
+
+    public List<Transito> listarTransitosPropietario(String cedula) {
+        Propietario propietario = sistemaAcceso.buscarPropietario(cedula);
+        return sistemaTransitos.obtenerTransitosPorPropietario(propietario);
+    }
+        
 
     // Getter para los sistemas (en caso de necesitar acceso directo)
     protected SistemaGestionAcceso getSistemaAcceso() {

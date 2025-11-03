@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Propietarios</title>
-    <style href="panel-propietarios.css"></style>
+    <link rel="stylesheet" href="panel-propietarios.css">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📊 Tablero de control del propietario</h1>
+            <h1 id="titulo">📊 Tablero de control del propietario</h1>
             <button class="btn-salir" onclick="salir()">Salir</button>
         </div>
         
@@ -20,15 +20,15 @@
             <div class="resumen">
                 <div class="resumen-item">
                     <span class="resumen-label">Nombre Completo</span>
-                    <span class="resumen-value" id="nombrePropietario">Juan Pérez</span>
+                    <span class="resumen-value" id="nombrePropietario"></span>
                 </div>
                 <div class="resumen-item">
                     <span class="resumen-label">Estado</span>
-                    <span class="resumen-value estado-activo" id="estadoPropietario">Activo</span>
+                    <span class="resumen-value estado-activo" id="estadoPropietario"></span>
                 </div>
                 <div class="resumen-item">
                     <span class="resumen-label">Saldo Actual</span>
-                    <span class="resumen-value saldo-amount" id="saldoPropietario">$ 2.540,00</span>
+                    <span class="resumen-value saldo-amount" id="saldoPropietario"></span>
                 </div>
             </div>
         </div>
@@ -46,18 +46,7 @@
                             <th>Fecha asignada</th>
                         </tr>
                     </thead>
-                    <tbody id="tablaBonificaciones">
-                        <tr>
-                            <td>Programa Frecuente</td>
-                            <td>Peaje Norte</td>
-                            <td>2025-01-12</td>
-                        </tr>
-                        <tr>
-                            <td>Exonerados</td>
-                            <td>Peaje Centro</td>
-                            <td>2025-01-03</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tablaBonificaciones"></tbody>
                 </table>
             </div>
             
@@ -74,22 +63,7 @@
                             <th>Monto total</th>
                         </tr>
                     </thead>
-                    <tbody id="tablaVehiculos">
-                        <tr>
-                            <td>SAR1234</td>
-                            <td>sedan</td>
-                            <td>Azul</td>
-                            <td>12</td>
-                            <td class="monto-positivo">$ 1.240,00</td>
-                        </tr>
-                        <tr>
-                            <td>SCD5678</td>
-                            <td>SUV</td>
-                            <td>Gris</td>
-                            <td>4</td>
-                            <td class="monto-positivo">$ 885,00</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tablaVehiculos"></tbody>
                 </table>
             </div>
         </div>
@@ -111,41 +85,7 @@
                         <th>Hora</th>
                     </tr>
                 </thead>
-                <tbody id="tablaTransitos">
-                    <tr>
-                        <td>Peaje Sur</td>
-                        <td>SAR1234</td>
-                        <td>Tarifa básica</td>
-                        <td>$ 120,00</td>
-                        <td>Frecuente</td>
-                        <td class="monto-negativo">-$ 24,00</td>
-                        <td class="monto-positivo">$ 96,00</td>
-                        <td>2025-09-19</td>
-                        <td>18:43</td>
-                    </tr>
-                    <tr>
-                        <td>Peaje Norte</td>
-                        <td>SCD5678</td>
-                        <td>tarifa plus</td>
-                        <td>$ 150,00</td>
-                        <td>Exonerado</td>
-                        <td class="monto-negativo">-$ 36,00</td>
-                        <td class="monto-positivo">$ 114,00</td>
-                        <td>2025-09-18</td>
-                        <td>08:22</td>
-                    </tr>
-                    <tr>
-                        <td>Peaje Centro</td>
-                        <td>SAR1234</td>
-                        <td>Tarifa básica</td>
-                        <td>$ 120,00</td>
-                        <td>Frecuente</td>
-                        <td class="monto-negativo">-$ 24,00</td>
-                        <td class="monto-positivo">$ 96,00</td>
-                        <td>2025-09-17</td>
-                        <td>19:01</td>
-                    </tr>
-                </tbody>
+                <tbody id="tablaTransitos"></tbody>
             </table>
         </div>
         
@@ -155,18 +95,117 @@
                 <div class="section-title" style="margin: 0; padding: 0; border: none;">Notificaciones del sistema</div>
                 <button class="btn-borrar" onclick="borrarNotificaciones()">Borrar notificaciones</button>
             </div>
-            <div id="listaNotificaciones">
-                <div class="notificacion-item">
-                    <div class="notificacion-fecha">2025-09-19 19:00</div>
-                    <div class="notificacion-mensaje">Nuevo tránsito registrado (SAR1234 - Peaje Sur)</div>
-                </div>
-                <div class="notificacion-item">
-                    <div class="notificacion-fecha">2025-09-18 03:23</div>
-                    <div class="notificacion-mensaje">Bonificación frecuente aplicada (SCD5678)</div>
-                </div>
-            </div>
+            <div id="listaNotificaciones"></div>
         </div>
     </div>
     
 </body>
+<script src="vistaWeb.js"></script>
+<script src="utilesVista.js"></script>
+<script>
+    // Iniciar la vista automáticamente (vistaWeb.js usa urlIniciarVista)
+    var urlIniciarVista = "/propietario/tablero";
+    var parametrosInicioVista = "";
+
+    const URL_SALIR = "acceso/logoutPeaje"; // controlador: /acceso/logoutPeaje
+
+    // Handlers que procesan las respuestas del backend: mostrar_<id>
+    function mostrar_resumen(param) {
+        if (!param) return;
+        document.getElementById('nombrePropietario').textContent = param.nombreCompleto || '';
+        document.getElementById('estadoPropietario').textContent = param.estado || '';
+        document.getElementById('saldoPropietario').textContent = (param.saldoActual != null) ? ('$ ' + Number(param.saldoActual).toFixed(2)) : '';
+    }
+
+    function mostrar_bonificaciones(lista) {
+        const tbody = document.getElementById('tablaBonificaciones');
+        tbody.innerHTML = '';
+        if (!Array.isArray(lista) || lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="empty-message">No hay bonificaciones asignadas.</td></tr>';
+            return;
+        }
+        lista.forEach(b => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${b.nombreBonificacion || ''}</td><td>${b.nombrePuesto || ''}</td><td>${b.fechaAsignada ? new Date(b.fechaAsignada).toLocaleDateString() : ''}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function mostrar_vehiculos(lista) {
+        const tbody = document.getElementById('tablaVehiculos');
+        tbody.innerHTML = '';
+        if (!Array.isArray(lista) || lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-message">No hay vehículos registrados.</td></tr>';
+            return;
+        }
+        lista.forEach(v => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${v.matricula || ''}</td><td>${v.modelo || ''}</td><td>${v.color || ''}</td><td>${v.cantidadTransitos || 0}</td><td class="monto-positivo">$ ${Number(v.montoTotal || 0).toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function mostrar_transitos(lista) {
+        const tbody = document.getElementById('tablaTransitos');
+        tbody.innerHTML = '';
+        if (!Array.isArray(lista) || lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-message">No hay tránsitos para mostrar.</td></tr>';
+            return;
+        }
+        lista.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${t.puesto || ''}</td>
+                <td>${t.matricula || ''}</td>
+                <td>${t.tarifa || ''}</td>
+                <td>$ ${Number(t.montoTarifa || 0).toFixed(2)}</td>
+                <td>${t.bonificacion || ''}</td>
+                <td class="monto-negativo">${t.montoBonificacion ? ('-$ ' + Math.abs(Number(t.montoBonificacion)).toFixed(2)) : ''}</td>
+                <td class="monto-positivo">$ ${Number(t.montoPagado || 0).toFixed(2)}</td>
+                <td>${t.fecha ? new Date(t.fecha).toLocaleDateString() : ''}</td>
+                <td>${t.hora || ''}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function mostrar_notificaciones(lista) {
+        const cont = document.getElementById('listaNotificaciones');
+        cont.innerHTML = '';
+        if (!Array.isArray(lista) || lista.length === 0) {
+            cont.innerHTML = '<div class="empty-message">No hay notificaciones.</div>';
+            return;
+        }
+        lista.forEach(n => {
+            const div = document.createElement('div');
+            div.className = 'notificacion-item';
+            div.innerHTML = `<div class="notificacion-fecha">${n.fechaHora ? new Date(n.fechaHora).toLocaleString() : ''}</div><div class="notificacion-mensaje">${n.mensaje || ''}</div>`;
+            cont.appendChild(div);
+        });
+    }
+
+    function mostrar_exito(msg) {
+        console.log('Éxito:', msg);
+    }
+
+    function mostrar_error(msg) {
+        mostrarMensaje(msg || 'Se produjo un error');
+    }
+
+    function mostrar_paginaLogin(url) {
+        window.location.href = url || '/login-propietarios';
+    }
+
+    function salir() {
+        submit(URL_SALIR, '');
+    }
+
+    function borrarNotificaciones() {
+        submit('/propietario/borrarNotificaciones', '');
+    }
+
+    // Export minimal helpers for console/testing
+    window.borrarNotificaciones = borrarNotificaciones;
+    window.salir = salir;
+</script>
 </html>

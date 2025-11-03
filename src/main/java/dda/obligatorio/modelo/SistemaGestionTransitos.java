@@ -2,6 +2,8 @@ package dda.obligatorio.modelo;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +13,11 @@ public class SistemaGestionTransitos {
 
     public SistemaGestionTransitos() {
         this.transitos = new ArrayList<>();
+    }
+
+    // Permite registrar un tránsito (utilizado por datos de prueba)
+    public void registrarTransito(Transito t) {
+        if (t != null) this.transitos.add(t);
     }
 
     public List<Transito> obtenerTodosTransitos() {
@@ -25,6 +32,34 @@ public class SistemaGestionTransitos {
         }
         return resultado;
     }
+
+    public List<Transito> obtenerTransitosPorPropietario(Propietario p) {
+        List<Transito> resultado = new ArrayList<>();
+        if (p == null) return resultado;
+
+        for (Vehiculo v : p.getVehiculos()) {
+            List<Transito> porVehiculo = obtenerTransitosPorVehiculo(v.getMatricula());
+            if (porVehiculo != null && !porVehiculo.isEmpty()) {
+                resultado.addAll(porVehiculo);
+            }
+        }
+
+        // Orden descendente por fecha (más reciente primero)
+        Collections.sort(resultado, new Comparator<Transito>() {
+            @Override
+            public int compare(Transito t1, Transito t2) {
+                Date d1 = t1.getFecha();
+                Date d2 = t2.getFecha();
+                if (d1 == null && d2 == null) return 0;
+                if (d1 == null) return 1;
+                if (d2 == null) return -1;
+                return d2.compareTo(d1);
+            }
+        });
+
+        return resultado;
+    }
+    
 
     public List<Transito> obtenerTransitosPorFecha(Date fecha) {
         List<Transito> resultado = new ArrayList<>();

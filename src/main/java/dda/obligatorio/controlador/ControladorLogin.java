@@ -20,19 +20,13 @@ import dda.obligatorio.modelo.Fachada;
 public class ControladorLogin {
 
     @PostMapping("/loginPropietarios")
-    public List<Respuesta> loginPropietarios(HttpSession sesionHttp, @RequestParam String username, @RequestParam String password) throws PeajeException {
+    public List<Respuesta> loginPropietarios(HttpSession sesionHttp, @RequestParam String cedula, @RequestParam String password) throws PeajeException {
         
         //login al modelo
-        Propietario p  = Fachada.getInstancia().loginPropietario(username, password);
-        
-
-        //si hay una sesion activa la cierro
+        Propietario p  = Fachada.getInstancia().loginPropietario(cedula, password);
         logoutPropietarios(sesionHttp);
-
-        //guardo la sesion de la logica en la sesionHttp
         sesionHttp.setAttribute("usuarioPropietario", p);
-    // devolver la URL destino para redirigir en la vista (por ejemplo, a la raíz)
-    return Respuesta.lista(new Respuesta("loginExitoso", "/"));
+    return Respuesta.lista(new Respuesta("loginExitoso", "panel-propietarios.html"));
     }
 
     @PostMapping("/loginAdmin")

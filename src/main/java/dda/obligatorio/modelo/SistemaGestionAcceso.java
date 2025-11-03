@@ -10,19 +10,6 @@ public class SistemaGestionAcceso {
     public SistemaGestionAcceso() {
         this.administradores = new ArrayList<>();
         this.propietarios = new ArrayList<>();
-        precargarDatos();
-    }
-
-    private void precargarDatos() {
-        // Precarga de Administradores
-        administradores.add(new Administrador("12345678", "admin.123", "Usuario Administrador"));
-        administradores.add(new Administrador("13456789", "admin2.123", "Segundo Administrador"));
-        
-        // Precarga de Propietarios
-        propietarios.add(new Propietario("23456789", "prop.123", 
-            "Usuario Propietario", 2000, 500));
-        propietarios.add(new Propietario("34567890", "prop2.123", 
-            "Segundo Propietario", 1500, 400));
     }
 
     public void logout(Usuario u){

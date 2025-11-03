@@ -16,6 +16,19 @@ public class SistemaGestionPeaje {
         
     }
 
+    // Métodos para agregar datos (utilizados por la clase de datos de prueba)
+    public void agregarPuesto(Puesto puesto) {
+        if (puesto != null) this.puestos.add(puesto);
+    }
+
+    public void agregarCategoria(Categoria categoria) {
+        if (categoria != null) this.categorias.add(categoria);
+    }
+
+    public void agregarBonificacion(Bonificacion bonificacion) {
+        if (bonificacion != null) this.bonificaciones.add(bonificacion);
+    }
+
     public List<Puesto> obtenerTodosPuestos() {
         return new ArrayList<>(puestos);
     }
