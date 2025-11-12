@@ -112,8 +112,6 @@ public class Fachada {
         return sistemaTransitos.obtenerTransitosPorPropietario(propietario);
     }
         
-
-    // Getter para los sistemas (en caso de necesitar acceso directo)
     protected SistemaGestionAcceso getSistemaAcceso() {
         return sistemaAcceso;
     }

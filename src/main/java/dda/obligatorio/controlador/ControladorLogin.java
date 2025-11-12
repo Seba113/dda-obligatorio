@@ -21,23 +21,17 @@ public class ControladorLogin {
 
     @PostMapping("/loginPropietarios")
     public List<Respuesta> loginPropietarios(HttpSession sesionHttp, @RequestParam String cedula, @RequestParam String password) throws PeajeException {
-        
-        //login al modelo
         Propietario p  = Fachada.getInstancia().loginPropietario(cedula, password);
         logoutPropietarios(sesionHttp);
         sesionHttp.setAttribute("usuarioPropietario", p);
-    return Respuesta.lista(new Respuesta("loginExitoso", "panel-propietarios.html"));
+        return Respuesta.lista(new Respuesta("loginExitoso", "panel-propietarios.html"));
     }
 
     @PostMapping("/loginAdmin")
-    public List<Respuesta> loginAdministrador(HttpSession sesionHttp, @RequestParam String username, @RequestParam String password) throws PeajeException {
-        //login al modelo
-        Administrador admin = Fachada.getInstancia().loginAdministrador(username, password);
-                
-        //guardo el admin en la sesionHttp
+    public List<Respuesta> loginAdministrador(HttpSession sesionHttp, @RequestParam String cedula, @RequestParam String password) throws PeajeException {
+        Administrador admin = Fachada.getInstancia().loginAdministrador(cedula, password);
         sesionHttp.setAttribute("usuarioAdmin", admin);
-    // devolver la URL destino para redirigir en la vista (por ejemplo, a la raíz)
-    return Respuesta.lista(new Respuesta("loginExitoso", "/"));
+        return Respuesta.lista(new Respuesta("loginExitoso", "/"));
     }
 
     @PostMapping("/logoutPeaje")

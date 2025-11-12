@@ -29,10 +29,6 @@ import dda.obligatorio.modelo.Vehiculo;
 public class ControladorPropietario {
     private Fachada fachada = Fachada.getInstancia();
 
-    /**
-     * Endpoint que devuelve el conjunto de respuestas que forman el tablero del propietario.
-     * Usa la cédula pasada por parámetro o la del usuario almacenado en sesión.
-     */
     @PostMapping("/propietario/tablero")
     public List<Respuesta> obtenerTableroPropietario(HttpSession sesionHttp, @RequestParam(required = false) String cedula) {
         List<Respuesta> respuestas = new ArrayList<>();
