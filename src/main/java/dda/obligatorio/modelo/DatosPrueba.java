@@ -29,9 +29,12 @@ public class DatosPrueba {
         fachada.registrarPropietario("20000002", "prop2", "Propietario Dos", 1500.0, 200.0);
         fachada.registrarPropietario("20000003", "prop3", "Propietario Tres", 800.0, 100.0);
         fachada.registrarPropietario("20000004", "prop4", "Propietario Cuatro", 4000.0, 500.0);
+        
+        // Obtener referencias a propietarios
+        Propietario prop1 = fachada.buscarPropietario("23456789");
+        Propietario prop2 = fachada.buscarPropietario("20000002");
 
         // Configurar propietario 2 como deshabilitado
-        Propietario prop2 = fachada.buscarPropietario("20000002");
         if (prop2 != null) {
             prop2.setEstadoActual(new Deshabilitado());
         }
@@ -91,18 +94,30 @@ public class DatosPrueba {
         fachada.getSistemaPeaje().agregarBonificacion(b3);
         fachada.getSistemaPeaje().agregarBonificacion(b4);
 
+        // Asignar bonificaciones al propietario 1 ANTES de crear vehículos
+        if (prop1 != null) {
+            Calendar cal = Calendar.getInstance();
+            Date fechaAsignacion = cal.getTime();
+            
+            prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b1, p1));
+            prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b2, p2));
+            prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b3, p3));
+            prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b4, p4));
+        }
+
         // Asignar vehículos a propietarios (4 vehículos)
-        Propietario prop1 = fachada.buscarPropietario("23456789");
 
         Vehiculo v1 = new Vehiculo("AAA111", "Sedan", "Azul", cat1);
         Vehiculo v2 = new Vehiculo("BBB222", "SUV", "Gris", cat2);
         Vehiculo v3 = new Vehiculo("CCC333", "Camion", "Rojo", cat3);
         Vehiculo v4 = new Vehiculo("DDD444", "Moto", "Negra", cat4);
 
-        if (prop1 != null) prop1.agregarVehiculo(v1);
-        if (prop1 != null) prop1.agregarVehiculo(v2);
-        if (prop1 != null) prop1.agregarVehiculo(v3);
-        if (prop1 != null) prop1.agregarVehiculo(v4);
+        if (prop1 != null) {
+            prop1.agregarVehiculo(v1);
+            prop1.agregarVehiculo(v2);
+            prop1.agregarVehiculo(v3);
+            prop1.agregarVehiculo(v4);
+        }
 
         // Crear 4 tránsitos y registrarlos
         Date ahora = new Date();
@@ -111,22 +126,26 @@ public class DatosPrueba {
         Transito tr3 = new Transito(ahora, v3, p3);
         Transito tr4 = new Transito(ahora, v4, p4);
 
+        // Aplicar bonificaciones a los tránsitos
+        tr1.aplicarBonificacion(b1); 
+        tr2.aplicarBonificacion(b2);
+        tr3.aplicarBonificacion(b3); 
+        tr4.aplicarBonificacion(b4); 
+
         fachada.getSistemaTransitos().registrarTransito(tr1);
         fachada.getSistemaTransitos().registrarTransito(tr2);
         fachada.getSistemaTransitos().registrarTransito(tr3);
         fachada.getSistemaTransitos().registrarTransito(tr4);
 
-        // Asociar algunas asignaciones y notificaciones de prueba
-        Calendar cal = Calendar.getInstance();
-        Date hoy = cal.getTime();
-        prop1.agregarAsignacion(new Asignacion(hoy, b1, p1));
-        prop1.agregarAsignacion(new Asignacion(hoy, b2, p2));
-        prop1.agregarAsignacion(new Asignacion(hoy, b3, p3));
-        prop1.agregarAsignacion(new Asignacion(hoy, b4, p4));
+        // Agregar notificaciones de prueba
+        if (prop1 != null) {
+            Calendar cal = Calendar.getInstance();
+            Date hoy = cal.getTime();
 
-        prop1.agregarNotificacion(new Notificacion(hoy, "Bienvenido Propietario Uno", "Info"));
-        prop1.agregarNotificacion(new Notificacion(hoy, "Notificacion 2", "Info"));
-        prop1.agregarNotificacion(new Notificacion(hoy, "Notificacion 3", "Info"));
-        prop1.agregarNotificacion(new Notificacion(hoy, "Notificacion 4", "Info"));
+            prop1.agregarNotificacion(new Notificacion(hoy, "Bienvenido al sistema de peaje", "Info"));
+            prop1.agregarNotificacion(new Notificacion(hoy, "Su saldo actual es: $2000.00", "Info"));
+            prop1.agregarNotificacion(new Notificacion(hoy, "Tiene 4 bonificaciones asignadas", "Info"));
+            prop1.agregarNotificacion(new Notificacion(hoy, "Recuerde mantener su saldo por encima del mínimo", "Alerta"));
+        }
     }
 }
