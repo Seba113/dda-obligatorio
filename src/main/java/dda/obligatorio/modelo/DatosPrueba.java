@@ -30,6 +30,12 @@ public class DatosPrueba {
         fachada.registrarPropietario("20000003", "prop3", "Propietario Tres", 800.0, 100.0);
         fachada.registrarPropietario("20000004", "prop4", "Propietario Cuatro", 4000.0, 500.0);
 
+        // Configurar propietario 2 como deshabilitado
+        Propietario prop2 = fachada.buscarPropietario("20000002");
+        if (prop2 != null) {
+            prop2.setEstadoActual(new Deshabilitado());
+        }
+
         // 4 categorías
         Categoria cat1 = new Categoria("Auto");
         Categoria cat2 = new Categoria("Camioneta");

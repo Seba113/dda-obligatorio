@@ -76,8 +76,8 @@ public class SistemaGestionAcceso {
     public Propietario loginPropietario(String cedula, String pwd) throws PeajeException {
          Propietario prop = (Propietario) login(cedula, pwd, propietarios);
          if(prop==null) throw new PeajeException("Acceso denegado");
-         if(prop.getEstadoActual().getNombre().equals(Estado.DESHABILITADO)){
-             throw new PeajeException("Usuario deshabilitado. No puede ingresar al sistema.");
+         if(!prop.puedeLoguerse()){
+             throw new PeajeException(prop.getEstadoActual().getMensajeLoginDenegado());
          }
         return prop;
     }

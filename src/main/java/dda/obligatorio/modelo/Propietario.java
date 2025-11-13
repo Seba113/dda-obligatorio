@@ -8,7 +8,7 @@ public class Propietario extends Usuario {
 
     private double saldoActual;
     private double saldoMinimo;
-    private Estado estadoActual;
+    private EstadoPropietario estadoActual;
     private List<Vehiculo> vehiculos;
     private List<Asignacion> asignaciones;
     private List<Notificacion> notificaciones;
@@ -18,7 +18,7 @@ public class Propietario extends Usuario {
         super(cedula, contrasena, nombreCompleto);
         this.saldoActual = saldoActual;
         this.saldoMinimo = saldoMinimo;
-        this.estadoActual = new Estado(Estado.HABILITADO); // Estado por defecto
+        this.estadoActual = new Habilitado();
         this.vehiculos = new ArrayList<>();
         this.asignaciones = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
@@ -45,11 +45,11 @@ public class Propietario extends Usuario {
         this.saldoMinimo = saldoMinimo;
     }
     
-    public Estado getEstadoActual() {
+    public EstadoPropietario getEstadoActual() {
         return estadoActual;
     }
     
-    public void setEstadoActual(Estado estadoActual) {
+    public void setEstadoActual(EstadoPropietario estadoActual) {
         this.estadoActual = estadoActual;
     }
     
@@ -128,18 +128,23 @@ public class Propietario extends Usuario {
     }
 
     public boolean puedeTransitar() {
-        String estado = this.estadoActual.getNombre();
-        return estado.equals(Estado.HABILITADO) || estado.equals(Estado.PENALIZADO);
+        return estadoActual.puedeRegistrarTransito();
     }
 
     public boolean puedeRecibirBonificaciones() {
-        String estado = this.estadoActual.getNombre();
-        return estado.equals(Estado.HABILITADO);
+        return estadoActual.puedeAsignarBonificacion();
     }
 
     public boolean registraNotificaciones() {
-        String estado = this.estadoActual.getNombre();
-        return !estado.equals(Estado.PENALIZADO);
+        return estadoActual.puedeRegistrarNotificacion();
+    }
+
+    public boolean aplicaDescuentos() {
+        return estadoActual.puedeAplicarDescuento();
+    }
+
+    public boolean puedeLoguerse() {
+        return estadoActual.puedeLoguerse();
     }
 
     @Override
