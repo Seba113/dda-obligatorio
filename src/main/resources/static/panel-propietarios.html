@@ -39,13 +39,6 @@
             <div class="section">
                 <div class="section-title">Bonificaciones asignadas</div>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Bonificación</th>
-                            <th>Puesto</th>
-                            <th>Fecha asignada</th>
-                        </tr>
-                    </thead>
                     <tbody id="tablaBonificaciones"></tbody>
                 </table>
             </div>
@@ -54,15 +47,6 @@
             <div class="section">
                 <div class="section-title">Vehículos registrados</div>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Matrícula</th>
-                            <th>Modelo</th>
-                            <th>Color</th>
-                            <th>Tránsitos</th>
-                            <th>Monto total</th>
-                        </tr>
-                    </thead>
                     <tbody id="tablaVehiculos"></tbody>
                 </table>
             </div>
@@ -72,19 +56,6 @@
         <div class="section">
             <div class="section-title">Tránsitos realizados</div>
             <table>
-                <thead>
-                    <tr>
-                        <th>Puesto</th>
-                        <th>Matrícula</th>
-                        <th>Tarifa</th>
-                        <th>Monto tarifa</th>
-                        <th>Bonificación</th>
-                        <th>Monto bonificación</th>
-                        <th>Monto pagado</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                    </tr>
-                </thead>
                 <tbody id="tablaTransitos"></tbody>
             </table>
         </div>
@@ -93,9 +64,10 @@
         <div class="section">
             <div class="notificaciones-header">
                 <div class="section-title" style="margin: 0; padding: 0; border: none;">Notificaciones del sistema</div>
-                <button class="btn-borrar" onclick="borrarNotificaciones()">Borrar notificaciones</button>
+                
             </div>
             <div id="listaNotificaciones"></div>
+            <button class="btn-borrar" onclick="borrarNotificaciones()">Borrar notificaciones</button>
         </div>
     </div>
     
@@ -107,79 +79,93 @@
     var urlIniciarVista = "/propietario/tablero";
     var parametrosInicioVista = "";
 
-    const URL_SALIR = "acceso/logoutPeaje"; // controlador: /acceso/logoutPeaje
+    const URL_SALIR = "acceso/logoutPeaje";
+
+    // Helper para formatear datos antes de pasarlos a crearTablaDesdeJson
+    function formatearDatos(lista, tipo) {
+        if (!Array.isArray(lista)) return [];
+        
+        switch(tipo) {
+            case 'bonificaciones':
+                return lista.map(b => ({
+                    bonificacion: b.nombreBonificacion || '',
+                    puesto: b.nombrePuesto || '',
+                    fechaAsignada: b.fechaAsignada ? new Date(b.fechaAsignada).toLocaleDateString() : ''
+                }));
+            
+            case 'vehiculos':
+                return lista.map(v => ({
+                    matricula: v.matricula || '',
+                    modelo: v.modelo || '',
+                    color: v.color || '',
+                    transitos: v.cantidadTransitos || 0,
+                    montoTotal: '$ ' + Number(v.montoTotal || 0).toFixed(2)
+                }));
+            
+            case 'transitos':
+                return lista.map(t => ({
+                    puesto: t.puesto || '',
+                    matricula: t.matricula || '',
+                    tarifa: t.tarifa || '',
+                    montoTarifa: '$ ' + Number(t.montoTarifa || 0).toFixed(2),
+                    bonificacion: t.bonificacion || '',
+                    montoBonificacion: t.montoBonificacion ? '-$ ' + Math.abs(Number(t.montoBonificacion)).toFixed(2) : '',
+                    montoPagado: '$ ' + Number(t.montoPagado || 0).toFixed(2),
+                    fecha: t.fecha ? new Date(t.fecha).toLocaleDateString() : '',
+                    hora: t.hora || ''
+                }));
+            
+            default:
+                return lista;
+        }
+    }
 
     // Handlers que procesan las respuestas del backend: mostrar_<id>
     function mostrar_resumen(param) {
         if (!param) return;
         document.getElementById('nombrePropietario').textContent = param.nombreCompleto || '';
         document.getElementById('estadoPropietario').textContent = param.estado || '';
-        document.getElementById('saldoPropietario').textContent = (param.saldoActual != null) ? ('$ ' + Number(param.saldoActual).toFixed(2)) : '';
+        document.getElementById('saldoPropietario').textContent = param.saldoActual != null ? '$ ' + Number(param.saldoActual).toFixed(2) : '';
     }
 
     function mostrar_bonificaciones(lista) {
         const tbody = document.getElementById('tablaBonificaciones');
-        tbody.innerHTML = '';
-        if (!Array.isArray(lista) || lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="empty-message">No hay bonificaciones asignadas.</td></tr>';
-            return;
-        }
-        lista.forEach(b => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${b.nombreBonificacion || ''}</td><td>${b.nombrePuesto || ''}</td><td>${b.fechaAsignada ? new Date(b.fechaAsignada).toLocaleDateString() : ''}</td>`;
-            tbody.appendChild(tr);
-        });
+        const datosFormateados = formatearDatos(lista, 'bonificaciones');
+        tbody.innerHTML = datosFormateados.length > 0 
+            ? crearTablaDesdeJson(datosFormateados)
+            : '<tr><td colspan="3" class="empty-message">No hay bonificaciones asignadas.</td></tr>';
     }
 
     function mostrar_vehiculos(lista) {
         const tbody = document.getElementById('tablaVehiculos');
-        tbody.innerHTML = '';
-        if (!Array.isArray(lista) || lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="empty-message">No hay vehículos registrados.</td></tr>';
-            return;
-        }
-        lista.forEach(v => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${v.matricula || ''}</td><td>${v.modelo || ''}</td><td>${v.color || ''}</td><td>${v.cantidadTransitos || 0}</td><td class="monto-positivo">$ ${Number(v.montoTotal || 0).toFixed(2)}</td>`;
-            tbody.appendChild(tr);
-        });
+        const datosFormateados = formatearDatos(lista, 'vehiculos');
+        tbody.innerHTML = datosFormateados.length > 0 
+            ? crearTablaDesdeJson(datosFormateados)
+            : '<tr><td colspan="5" class="empty-message">No hay vehículos registrados.</td></tr>';
     }
 
     function mostrar_transitos(lista) {
         const tbody = document.getElementById('tablaTransitos');
-        tbody.innerHTML = '';
-        if (!Array.isArray(lista) || lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" class="empty-message">No hay tránsitos para mostrar.</td></tr>';
-            return;
-        }
-        lista.forEach(t => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${t.puesto || ''}</td>
-                <td>${t.matricula || ''}</td>
-                <td>${t.tarifa || ''}</td>
-                <td>$ ${Number(t.montoTarifa || 0).toFixed(2)}</td>
-                <td>${t.bonificacion || ''}</td>
-                <td class="monto-negativo">${t.montoBonificacion ? ('-$ ' + Math.abs(Number(t.montoBonificacion)).toFixed(2)) : ''}</td>
-                <td class="monto-positivo">$ ${Number(t.montoPagado || 0).toFixed(2)}</td>
-                <td>${t.fecha ? new Date(t.fecha).toLocaleDateString() : ''}</td>
-                <td>${t.hora || ''}</td>
-            `;
-            tbody.appendChild(tr);
-        });
+        const datosFormateados = formatearDatos(lista, 'transitos');
+        tbody.innerHTML = datosFormateados.length > 0 
+            ? crearTablaDesdeJson(datosFormateados)
+            : '<tr><td colspan="9" class="empty-message">No hay tránsitos para mostrar.</td></tr>';
     }
 
     function mostrar_notificaciones(lista) {
         const cont = document.getElementById('listaNotificaciones');
-        cont.innerHTML = '';
         if (!Array.isArray(lista) || lista.length === 0) {
             cont.innerHTML = '<div class="empty-message">No hay notificaciones.</div>';
             return;
         }
+        cont.innerHTML = '';
         lista.forEach(n => {
             const div = document.createElement('div');
             div.className = 'notificacion-item';
-            div.innerHTML = `<div class="notificacion-fecha">${n.fechaHora ? new Date(n.fechaHora).toLocaleString() : ''}</div><div class="notificacion-mensaje">${n.mensaje || ''}</div>`;
+            div.innerHTML = `
+                <div class="notificacion-fecha">${n.fechaHora ? new Date(n.fechaHora).toLocaleString() : ''}</div>
+                <div class="notificacion-mensaje">${n.mensaje || ''}</div>
+            `;
             cont.appendChild(div);
         });
     }
@@ -204,7 +190,7 @@
         submit('/propietario/borrarNotificaciones', '');
     }
 
-    // Export minimal helpers for console/testing
+    // Export helpers for console/testing
     window.borrarNotificaciones = borrarNotificaciones;
     window.salir = salir;
 </script>

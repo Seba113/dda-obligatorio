@@ -54,10 +54,10 @@ public class DatosPrueba {
         Puesto p3 = new Puesto("Peaje Este", "Av. Este 789");
         Puesto p4 = new Puesto("Peaje Oeste", "Av. Oeste 321");
 
-        fachada.getSistemaPeaje().agregarPuesto(p1);
-        fachada.getSistemaPeaje().agregarPuesto(p2);
-        fachada.getSistemaPeaje().agregarPuesto(p3);
-        fachada.getSistemaPeaje().agregarPuesto(p4);
+        fachada.agregarPuesto(p1);
+        fachada.agregarPuesto(p2);
+        fachada.agregarPuesto(p3);
+        fachada.agregarPuesto(p4);
 
         // 4 tarifas (asignadas a puestos para distintas categorías)
         Tarifa t1 = new Tarifa(120.0, cat1);

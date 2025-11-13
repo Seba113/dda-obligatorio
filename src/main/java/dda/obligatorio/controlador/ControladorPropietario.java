@@ -138,19 +138,22 @@ public class ControladorPropietario {
 
     @PostMapping("/propietario/borrarNotificaciones")
     public List<Respuesta> borrarNotificaciones(HttpSession sesionHttp, @RequestParam(required = false) String cedula) {
+        Propietario sesionProp = (Propietario) sesionHttp.getAttribute("usuarioPropietario");
+        if (sesionProp == null) {
+            return Respuesta.lista(new Respuesta("paginaLogin", "/login-propietarios"));
+        }
+
         if (cedula == null || cedula.isEmpty()) {
-            Propietario sesionProp = (Propietario) sesionHttp.getAttribute("usuarioPropietario");
-            if (sesionProp == null) return Respuesta.lista(new Respuesta("paginaLogin", "/login-propietarios"));
             cedula = sesionProp.getCedula();
         }
 
-        Propietario propietario = fachada.buscarPropietario(cedula);
-        if (propietario == null) {
-            return Respuesta.lista(new Respuesta("error", "Propietario no encontrado"));
+        try {
+            fachada.borrarNotificacionesPropietario(cedula);
+            // Recargar el tablero con las notificaciones ya borradas
+            return obtenerTableroPropietario(sesionHttp, cedula);
+        } catch (Exception e) {
+            return Respuesta.lista(new Respuesta("error", e.getMessage()));
         }
-
-        propietario.getNotificaciones().clear();
-        return Respuesta.lista(new Respuesta("exito", "Notificaciones borradas correctamente"));
     }
 
     private List<DTONotificacion> obtenerNotificacionesPropietario(Propietario propietario) {

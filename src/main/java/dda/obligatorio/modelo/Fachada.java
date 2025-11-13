@@ -111,6 +111,10 @@ public class Fachada {
         Propietario propietario = sistemaAcceso.buscarPropietario(cedula);
         return sistemaTransitos.obtenerTransitosPorPropietario(propietario);
     }
+
+    public void agregarPuesto(Puesto puesto) {
+        sistemaPeaje.agregarPuesto(puesto);
+    }
         
     protected SistemaGestionAcceso getSistemaAcceso() {
         return sistemaAcceso;
@@ -126,5 +130,13 @@ public class Fachada {
 
     public void logout(Usuario u) {
         sistemaAcceso.logout(u);
+    }
+
+    public void borrarNotificacionesPropietario(String cedula) throws PeajeException {
+        Propietario propietario = buscarPropietario(cedula);
+        if (propietario == null) {
+            throw new PeajeException("Propietario no encontrado");
+        }
+        propietario.limpiarNotificaciones();
     }
 }

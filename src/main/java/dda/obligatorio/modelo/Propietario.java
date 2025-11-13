@@ -147,6 +147,10 @@ public class Propietario extends Usuario {
         return estadoActual.puedeLoguerse();
     }
 
+    public void limpiarNotificaciones() {
+        this.notificaciones.clear();
+    }
+
     @Override
     public String toString() {
         return super.toString() + " [Estado: " + estadoActual + ", Saldo: $" + saldoActual + "]";
