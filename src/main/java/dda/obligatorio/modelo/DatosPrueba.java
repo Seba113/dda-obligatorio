@@ -46,10 +46,10 @@ public class DatosPrueba {
         Categoria cat4 = new Categoria("Moto");
 
         // Añadir categorías al sistema de peaje
-        fachada.getSistemaPeaje().agregarCategoria(cat1);
-        fachada.getSistemaPeaje().agregarCategoria(cat2);
-        fachada.getSistemaPeaje().agregarCategoria(cat3);
-        fachada.getSistemaPeaje().agregarCategoria(cat4);
+        fachada.agregarCategoria(cat1);
+        fachada.agregarCategoria(cat2);
+        fachada.agregarCategoria(cat3);
+        fachada.agregarCategoria(cat4);
 
         // 4 puestos
         Puesto p1 = new Puesto("Peaje Norte", "Av. Norte 123");
@@ -89,10 +89,10 @@ public class DatosPrueba {
             }
         };
 
-        fachada.getSistemaPeaje().agregarBonificacion(b1);
-        fachada.getSistemaPeaje().agregarBonificacion(b2);
-        fachada.getSistemaPeaje().agregarBonificacion(b3);
-        fachada.getSistemaPeaje().agregarBonificacion(b4);
+        fachada.agregarBonificacion(b1);
+        fachada.agregarBonificacion(b2);
+        fachada.agregarBonificacion(b3);
+        fachada.agregarBonificacion(b4);
 
         // Asignar bonificaciones al propietario 1 ANTES de crear vehículos
         if (prop1 != null) {
@@ -132,10 +132,10 @@ public class DatosPrueba {
         tr3.aplicarBonificacion(b3); 
         tr4.aplicarBonificacion(b4); 
 
-        fachada.getSistemaTransitos().registrarTransito(tr1);
-        fachada.getSistemaTransitos().registrarTransito(tr2);
-        fachada.getSistemaTransitos().registrarTransito(tr3);
-        fachada.getSistemaTransitos().registrarTransito(tr4);
+        fachada.registrarTransito(tr1);
+        fachada.registrarTransito(tr2);
+        fachada.registrarTransito(tr3);
+        fachada.registrarTransito(tr4);
 
         // Agregar notificaciones de prueba
         if (prop1 != null) {

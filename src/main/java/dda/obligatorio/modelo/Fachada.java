@@ -75,8 +75,16 @@ public class Fachada {
         return sistemaPeaje.obtenerTodasCategorias();
     }
 
+    public void agregarCategoria(Categoria categoria) {
+        sistemaPeaje.agregarCategoria(categoria);
+    }
+
     public List<Bonificacion> obtenerTodasBonificaciones() {
         return sistemaPeaje.obtenerTodasBonificaciones();
+    }
+
+    public void agregarBonificacion(Bonificacion bonificacion) {
+        sistemaPeaje.agregarBonificacion(bonificacion);
     }
 
     public double calcularMontoConBonificacion(double montoBase, Bonificacion bonificacion,
@@ -89,6 +97,10 @@ public class Fachada {
     // Métodos delegados de SistemaGestionTransitos
     public List<Transito> obtenerTodosTransitos() {
         return sistemaTransitos.obtenerTodosTransitos();
+    }
+
+    public void registrarTransito(Transito transito) {
+        sistemaTransitos.registrarTransito(transito);
     }
 
     public List<Transito> obtenerTransitosPorVehiculo(String matricula) {
@@ -116,17 +128,6 @@ public class Fachada {
         sistemaPeaje.agregarPuesto(puesto);
     }
         
-    protected SistemaGestionAcceso getSistemaAcceso() {
-        return sistemaAcceso;
-    }
-
-    protected SistemaGestionPeaje getSistemaPeaje() {
-        return sistemaPeaje;
-    }
-
-    protected SistemaGestionTransitos getSistemaTransitos() {
-        return sistemaTransitos;
-    }
 
     public void logout(Usuario u) {
         sistemaAcceso.logout(u);
