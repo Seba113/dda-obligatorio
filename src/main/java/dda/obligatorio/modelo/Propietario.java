@@ -12,6 +12,7 @@ public class Propietario extends Usuario {
     private List<Vehiculo> vehiculos;
     private List<Asignacion> asignaciones;
     private List<Notificacion> notificaciones;
+    private List<Transito> transitos;
 
     public Propietario(String cedula, String contrasena, String nombreCompleto, 
                       double saldoActual, double saldoMinimo) {
@@ -22,6 +23,7 @@ public class Propietario extends Usuario {
         this.vehiculos = new ArrayList<>();
         this.asignaciones = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
+        this.transitos = new ArrayList<>();
     }
     
     @Override
@@ -77,6 +79,14 @@ public class Propietario extends Usuario {
         this.notificaciones = notificaciones;
     }
 
+    public List<Transito> getTransitos() {
+        return transitos;
+    }
+
+    public void setTransitos(List<Transito> transitos) {
+        this.transitos = transitos;
+    }
+
     public void agregarVehiculo(Vehiculo vehiculo) {
         this.vehiculos.add(vehiculo);
     }
@@ -87,6 +97,10 @@ public class Propietario extends Usuario {
 
     public void agregarNotificacion(Notificacion notificacion) {
         this.notificaciones.add(notificacion);
+    }
+
+    public void agregarTransito(Transito transito) {
+        this.transitos.add(transito);
     }
 
     public boolean tieneSaldoSuficiente(double monto) {

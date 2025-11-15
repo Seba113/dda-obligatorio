@@ -1,10 +1,7 @@
 package dda.obligatorio.modelo;
 
-import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Clase Fachada que implementa el patrón Facade para proporcionar una interfaz unificada
@@ -14,13 +11,11 @@ public class Fachada {
     private static Fachada instancia;
     private final SistemaGestionAcceso sistemaAcceso;
     private final SistemaGestionPeaje sistemaPeaje;
-    private final SistemaGestionTransitos sistemaTransitos;
 
     // Constructor privado para el Singleton
     private Fachada() {
         this.sistemaAcceso = new SistemaGestionAcceso();
         this.sistemaPeaje = new SistemaGestionPeaje();
-        this.sistemaTransitos = new SistemaGestionTransitos();
     }
 
     // Método para obtener la instancia única (Singleton)
@@ -94,34 +89,9 @@ public class Fachada {
                                                        puesto, transitosAnteriores);
     }
 
-    // Métodos delegados de SistemaGestionTransitos
-    public List<Transito> obtenerTodosTransitos() {
-        return sistemaTransitos.obtenerTodosTransitos();
-    }
-
-    public void registrarTransito(Transito transito) {
-        sistemaTransitos.registrarTransito(transito);
-    }
-
-    public List<Transito> obtenerTransitosPorVehiculo(String matricula) {
-        return sistemaTransitos.obtenerTransitosPorVehiculo(matricula);
-    }
-
-    public List<Transito> obtenerTransitosPorFecha(Date fecha) {
-        return sistemaTransitos.obtenerTransitosPorFecha(fecha);
-    }
-
-    public int obtenerCantidadTransitos() {
-        return sistemaTransitos.obtenerCantidadTransitos();
-    }
-
-    public double calcularTotalRecaudado() {
-        return sistemaTransitos.calcularTotalRecaudado();
-    }
-
     public List<Transito> listarTransitosPropietario(String cedula) {
         Propietario propietario = sistemaAcceso.buscarPropietario(cedula);
-        return sistemaTransitos.obtenerTransitosPorPropietario(propietario);
+        return propietario != null ? propietario.getTransitos() : new ArrayList<>();
     }
 
     public void agregarPuesto(Puesto puesto) {

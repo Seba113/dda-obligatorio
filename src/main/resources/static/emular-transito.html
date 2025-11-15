@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emular Transito</title>
+    <link rel="stylesheet" href="emular-transito.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <span>🚗</span>
+                Emular tránsito
+            </h1>
+            <p>Seleccione un puesto, verifique las tarifas, ingrese una matrícula y emule un tránsito.</p>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="form-container">
+            <!-- Puesto -->
+            <div class="form-group">
+                <label for="puesto">Puesto</label>
+                <select id="puesto" onchange="cargarTarifas()">
+                    <option value="">Seleccione un puesto...</option>
+                    <option value="Puesto 101 - Acceso Norte">Puesto 101 - Acceso Norte</option>
+                    <option value="Puesto Montevideo">Puesto Montevideo</option>
+                    <option value="Puesto Canelones">Puesto Canelones</option>
+                </select>
+            </div>
+            
+            <!-- Tarifas del puesto -->
+            <div class="form-group" id="tarifasContainer" style="display: none;">
+                <label>Tarifas del puesto</label>
+                <table class="tarifa-table">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tarifasBody">
+                        <tr>
+                            <td>A (Auto)</td>
+                            <td>$ 120.00</td>
+                        </tr>
+                        <tr>
+                            <td>B (Camioneta)</td>
+                            <td>$ 180.00</td>
+                        </tr>
+                        <tr>
+                            <td>C (Camión)</td>
+                            <td>$ 280.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="helper-text">Se muestran categoría y monto actuales del puesto seleccionado.</p>
+            </div>
+            
+            <!-- Matrícula -->
+            <div class="form-group">
+                <label for="matricula">Matrícula</label>
+                <input type="text" id="matricula" placeholder="Ej: ABC1234" maxlength="7">
+            </div>
+            
+            <!-- Fecha y hora -->
+            <div class="form-group">
+                <label for="fechaHora">Fecha y hora del tránsito</label>
+                <input type="datetime-local" id="fechaHora">
+                <p class="helper-text">Ej: 2025-11-19 15:30</p>
+            </div>
+            
+            <!-- Botón emular -->
+            <button class="btn-emular" onclick="emularTransito()">Emular tránsito</button>
+            
+            <!-- Mensaje de error -->
+            <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Resultado -->
+            <div class="resultado" id="resultado">
+                <h3>Resultado</h3>
+                <div class="resultado-item">
+                    <span class="resultado-label">Propietario:</span>
+                    <span class="resultado-value" id="resPropietario">Juan Pérez (Activo)</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Categoría:</span>
+                    <span class="resultado-value" id="resCategoria">A (Auto)</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Bonificación:</span>
+                    <span class="resultado-value" id="resBonificacion">Residente Costa de Oro (10%)</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Costo del tránsito:</span>
+                    <span class="resultado-value" id="resCosto">$ 120.00</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Saldo luego del tránsito:</span>
+                    <span class="resultado-value success" id="resSaldo">$ 1400.75</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

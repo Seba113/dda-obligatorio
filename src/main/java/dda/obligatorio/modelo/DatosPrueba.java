@@ -132,10 +132,12 @@ public class DatosPrueba {
         tr3.aplicarBonificacion(b3); 
         tr4.aplicarBonificacion(b4); 
 
-        fachada.registrarTransito(tr1);
-        fachada.registrarTransito(tr2);
-        fachada.registrarTransito(tr3);
-        fachada.registrarTransito(tr4);
+        if (prop1 != null) {
+            prop1.agregarTransito(tr1);
+            prop1.agregarTransito(tr2);
+            prop1.agregarTransito(tr3);
+            prop1.agregarTransito(tr4);
+        }
 
         // Agregar notificaciones de prueba
         if (prop1 != null) {

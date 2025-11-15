@@ -45,4 +45,15 @@ public class ControladorLogin {
 
     }
 
+    @PostMapping("/logoutAdministrador")
+    public List<Respuesta> logoutAdministrador(HttpSession sesionHttp) throws PeajeException {
+        Administrador a = (Administrador)sesionHttp.getAttribute("usuarioAdmin");
+        if(a!=null){
+            Fachada.getInstancia().logout(a);
+            sesionHttp.removeAttribute("usuarioAdmin");
+        }
+        return Respuesta.lista(new Respuesta("paginaLogin", "login-admin.html"));
+
+    }
+
 }
