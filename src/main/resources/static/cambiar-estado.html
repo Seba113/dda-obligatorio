@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar Estado Propietario</title>
+    <link rel="stylesheet" href="cambiar-estado.css">
+    <script src="utilesVista.js"></script>
+    <script src="vistaWeb.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <span>👤</span>
+                Cambiar estado de propietario
+            </h1>
+            <p>Busque por cédula y cambie el estado del propietario.</p>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="form-container">
+            <!-- Buscar propietario -->
+            <div class="form-group">
+                <label for="cedula">Cédula de identidad</label>
+                <div class="input-group">
+                    <input type="text" id="cedula" placeholder="Ej: 23456789" maxlength="8">
+                    <button class="btn btn-primary" onclick="buscarPropietario()">Buscar</button>
+                </div>
+            </div>
+            
+            <!-- Mensaje de error -->
+            <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Mensaje de éxito -->
+            <div class="success-message" id="successMessage"></div>
+            
+            <!-- Información del propietario -->
+            <div class="propietario-info" id="propietarioInfo" style="display: none;">
+                <h3 style="font-size: 15px; margin-bottom: 15px; color: #1f2937;">Propietario</h3>
+                <div class="info-row">
+                    <span class="info-label">Nombre</span>
+                    <span class="info-value" id="nombrePropietario"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Estado actual</span>
+                    <span class="estado-badge" id="estadoActual"></span>
+                </div>
+            </div>
+            
+            <!-- Seleccionar nuevo estado -->
+            <div class="form-group" id="cambiarEstadoSection" style="display: none;">
+                <label for="nuevoEstado">Nuevo estado</label>
+                <div id="selectEstado"></div>
+                
+                <!-- Botón cambiar estado -->
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="cambiarEstado()">Cambiar estado</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            © 2025 - Administración
+        </div>
+    </div>
+    
+    <script>
+        let propietarioActual = null;
+
+        // Cargar estados disponibles al inicio
+        document.addEventListener('DOMContentLoaded', function() {
+            submit('/cambiar-estado/obtenerEstadosDisponibles', '');
+        });
+
+        function buscarPropietario() {
+            const cedula = document.getElementById('cedula').value.trim();
+            if (!cedula) {
+                mostrarError('Ingrese una cédula');
+                return;
+            }
+            
+            limpiarMensajes();
+            submit('/cambiar-estado/buscarPropietario', 'cedula=' + encodeURIComponent(cedula));
+        }
+
+        function cambiarEstado() {
+            if (!propietarioActual) return;
+            
+            const select = document.getElementById('nuevoEstado');
+            if (!select || select.value === '-1') {
+                mostrarError('Seleccione un estado');
+                return;
+            }
+            
+            limpiarMensajes();
+            const data = 'cedula=' + encodeURIComponent(propietarioActual.cedula) + 
+                        '&nuevoEstado=' + encodeURIComponent(select.value);
+            submit('/cambiar-estado/cambiarEstado', data);
+        }
+
+        function mostrar_estados(estados) {
+            const html = crearListaDesdeJson({
+                data: estados.map(e => ({nombre: e})),
+                campoMostrar: 'nombre',
+                campoValor: 'nombre',
+                id: 'nuevoEstado',
+                mostrarOpcionInicial: true
+            });
+            document.getElementById('selectEstado').innerHTML = html;
+        }
+
+        function mostrar_propietarioEncontrado(detalle) {
+            propietarioActual = detalle;
+            document.getElementById('nombrePropietario').textContent = detalle.nombre;
+            document.getElementById('estadoActual').textContent = detalle.estado;
+            document.getElementById('propietarioInfo').style.display = 'block';
+            document.getElementById('cambiarEstadoSection').style.display = 'block';
+            
+            // Preseleccionar estado actual
+            setTimeout(() => {
+                seleccionarPorTexto('nuevoEstado', detalle.estado);
+            }, 50);
+        }
+
+        function mostrar_exito(mensaje) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = mensaje;
+            successDiv.classList.add('show');
+            
+            // Actualizar estado mostrado
+            if (propietarioActual) {
+                const select = document.getElementById('nuevoEstado');
+                propietarioActual.estado = select.value;
+                document.getElementById('estadoActual').textContent = select.value;
+            }
+        }
+
+        function mostrar_error(mensaje) {
+            mostrarError(mensaje);
+        }
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = mensaje;
+            errorDiv.classList.add('show');
+            document.getElementById('propietarioInfo').style.display = 'none';
+            document.getElementById('cambiarEstadoSection').style.display = 'none';
+        }
+
+        function limpiarMensajes() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function procesarErrorSubmit(status, text) {
+            mostrarError('Error al procesar solicitud: ' + text);
+        }
+    </script>
+</body>
+</html>
