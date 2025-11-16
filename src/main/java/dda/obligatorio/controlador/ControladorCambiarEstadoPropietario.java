@@ -8,13 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import dda.obligatorio.modelo.Deshabilitado;
 import dda.obligatorio.modelo.EstadoPropietario;
 import dda.obligatorio.modelo.Fachada;
-import dda.obligatorio.modelo.Habilitado;
-import dda.obligatorio.modelo.Penalizado;
 import dda.obligatorio.modelo.Propietario;
-import dda.obligatorio.modelo.Suspendido;
 
 @RestController
 @RequestMapping("/cambiar-estado")
@@ -64,7 +60,8 @@ public class ControladorCambiarEstadoPropietario {
     @PostMapping("/obtenerEstadosDisponibles")
     public List<Respuesta> obtenerEstadosDisponibles() {
         List<Respuesta> respuestas = new ArrayList<>();
-        List<String> estados = List.of("Habilitado", "Deshabilitado", "Suspendido", "Penalizado");
+        // Delegar a EstadoPropietario (Expert del patrón State)
+        List<String> estados = EstadoPropietario.obtenerEstadosDisponibles();
         respuestas.add(new Respuesta("estados", estados));
         return respuestas;
     }
@@ -82,8 +79,8 @@ public class ControladorCambiarEstadoPropietario {
             return respuestas;
         }
         
-        // Crear nueva instancia del estado según el nombre (respeta Expert: Propietario es dueño de su estado)
-        EstadoPropietario estado = crearEstado(nuevoEstado);
+        // Usar factory method de EstadoPropietario (Expert del patrón State)
+        EstadoPropietario estado = EstadoPropietario.crearEstado(nuevoEstado);
         if (estado == null) {
             respuestas.add(new Respuesta("error", "Estado no válido: " + nuevoEstado));
             return respuestas;
@@ -93,16 +90,6 @@ public class ControladorCambiarEstadoPropietario {
         
         respuestas.add(new Respuesta("exito", "Estado cambiado a " + nuevoEstado + " para " + propietario.getNombreCompleto()));
         return respuestas;
-    }
-
-    private EstadoPropietario crearEstado(String nombreEstado) {
-        switch (nombreEstado) {
-            case "Habilitado": return new Habilitado();
-            case "Deshabilitado": return new Deshabilitado();
-            case "Suspendido": return new Suspendido();
-            case "Penalizado": return new Penalizado();
-            default: return null;
-        }
     }
 
     // Clases internas para transferir datos a la vista
