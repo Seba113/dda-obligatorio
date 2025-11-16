@@ -27,12 +27,13 @@ public class DatosPrueba {
         // 4 propietarios
         fachada.registrarPropietario("23456789", "prop.123", "Usuario Propietario", 2000.0, 500.0);
         fachada.registrarPropietario("20000002", "prop2", "Propietario Dos", 1500.0, 200.0);
-        fachada.registrarPropietario("20000003", "prop3", "Propietario Tres", 800.0, 100.0);
+        fachada.registrarPropietario("20000003", "prop3", "Propietario Tres", 0, 100.0);
         fachada.registrarPropietario("20000004", "prop4", "Propietario Cuatro", 4000.0, 500.0);
         
         // Obtener referencias a propietarios
         Propietario prop1 = fachada.buscarPropietario("23456789");
         Propietario prop2 = fachada.buscarPropietario("20000002");
+        Propietario prop3 = fachada.buscarPropietario("20000003");
 
         // Configurar propietario 2 como deshabilitado
         if (prop2 != null) {
@@ -103,6 +104,8 @@ public class DatosPrueba {
             prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b2, p2));
             prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b3, p3));
             prop1.agregarAsignacion(new Asignacion(fechaAsignacion, b4, p4));
+            prop2.agregarAsignacion(new Asignacion(fechaAsignacion, b4, p4));
+            prop3.agregarAsignacion(new Asignacion(fechaAsignacion, b3, p4));
         }
 
         // Asignar vehículos a propietarios (4 vehículos)
@@ -111,12 +114,20 @@ public class DatosPrueba {
         Vehiculo v2 = new Vehiculo("BBB222", "SUV", "Gris", cat2);
         Vehiculo v3 = new Vehiculo("CCC333", "Camion", "Rojo", cat3);
         Vehiculo v4 = new Vehiculo("DDD444", "Moto", "Negra", cat4);
+        Vehiculo v5 = new Vehiculo("EEE555", "Moto", "Blanco", cat4);
+        Vehiculo v6 = new Vehiculo("FFF666", "Auto", "Verde", cat1);
 
         if (prop1 != null) {
             prop1.agregarVehiculo(v1);
             prop1.agregarVehiculo(v2);
             prop1.agregarVehiculo(v3);
             prop1.agregarVehiculo(v4);
+        }
+        if (prop2 != null) {
+            prop2.agregarVehiculo(v5);
+        }
+        if (prop3 != null) {
+            prop3.agregarVehiculo(v6);
         }
 
         // Crear 4 tránsitos y registrarlos
