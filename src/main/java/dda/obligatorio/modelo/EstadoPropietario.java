@@ -16,4 +16,5 @@ public abstract class EstadoPropietario {
     public abstract boolean puedeAplicarDescuento();
     public abstract boolean puedeRegistrarNotificacion();
     public abstract String getMensajeLoginDenegado();
+    public abstract String getMensajeTransitoDenegado();
 }

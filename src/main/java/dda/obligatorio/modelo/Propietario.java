@@ -165,6 +165,15 @@ public class Propietario extends Usuario {
         this.notificaciones.clear();
     }
 
+    public Vehiculo buscarVehiculoPorMatricula(String matricula) {
+        for (Vehiculo v : vehiculos) {
+            if (v.getMatricula().equals(matricula)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return super.toString() + " [Estado: " + estadoActual + ", Saldo: $" + saldoActual + "]";

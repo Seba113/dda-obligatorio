@@ -35,5 +35,9 @@ public class Habilitado extends EstadoPropietario {
     public String getMensajeLoginDenegado() {
         return "Ah ocurrido un problema, vuelva a intentarlo.";
     }
+    @Override
+    public String getMensajeTransitoDenegado() {
+        return ""; // No aplica: puede registrar tránsito
+    }
 
 }

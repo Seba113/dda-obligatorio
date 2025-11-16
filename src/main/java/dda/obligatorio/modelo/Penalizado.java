@@ -35,5 +35,9 @@ public class Penalizado extends EstadoPropietario {
     public String getMensajeLoginDenegado() {
         return "Acceso denegado.";
     }
+    @Override
+    public String getMensajeTransitoDenegado() {
+        return ""; // Puede registrar tránsito; no aplica descuentos/avisos según banderas
+    }
 
 }

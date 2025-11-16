@@ -97,6 +97,10 @@ public class Fachada {
     public void agregarPuesto(Puesto puesto) {
         sistemaPeaje.agregarPuesto(puesto);
     }
+
+    public Puesto buscarPuestoPorNombre(String nombrePuesto) {
+        return sistemaPeaje.buscarPuestoPorNombre(nombrePuesto);
+    }
         
 
     public void logout(Usuario u) {
@@ -109,5 +113,15 @@ public class Fachada {
             throw new PeajeException("Propietario no encontrado");
         }
         propietario.limpiarNotificaciones();
+    }
+
+    public Vehiculo buscarVehiculoPorMatricula(String cedula, String matricula) {
+        Propietario propietario = buscarPropietario(cedula);
+        return propietario != null ? propietario.buscarVehiculoPorMatricula(matricula) : null;
+    }
+
+    // Buscar propietario por matrícula (delegado a acceso)
+    public Propietario buscarPropietarioPorMatricula(String matricula) {
+        return sistemaAcceso.buscarPropietarioPorMatricula(matricula);
     }
 }

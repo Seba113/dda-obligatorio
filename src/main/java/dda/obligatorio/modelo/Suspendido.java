@@ -35,5 +35,9 @@ public class Suspendido extends EstadoPropietario {
     public String getMensajeLoginDenegado() {
         return "Acceso denegado.";
     }
+    @Override
+    public String getMensajeTransitoDenegado() {
+        return "El propietario del vehículo está suspendido, no puede realizar tránsitos";
+    }
 
 }

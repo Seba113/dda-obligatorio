@@ -94,7 +94,14 @@ public class SistemaGestionAcceso {
     public List<Propietario> obtenerPropietarios() {
         return new ArrayList<>(propietarios);
     }
-
+    public Propietario buscarPropietarioPorMatricula(String matricula){
+        for(Propietario p : propietarios){
+            if(p.buscarVehiculoPorMatricula(matricula) != null){
+                return p;
+            }
+        }
+        return null;
+    }
     
 
 }

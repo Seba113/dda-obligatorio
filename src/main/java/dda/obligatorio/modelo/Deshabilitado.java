@@ -35,5 +35,9 @@ public class Deshabilitado extends EstadoPropietario {
     public String getMensajeLoginDenegado() {
         return "Usuario deshabilitado. No puede ingresar al sistema.";
     }
+    @Override
+    public String getMensajeTransitoDenegado() {
+        return "El propietario del vehículo está deshabilitado, no puede realizar tránsitos";
+    }
 
 }

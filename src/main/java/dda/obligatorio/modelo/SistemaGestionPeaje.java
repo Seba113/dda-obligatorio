@@ -49,4 +49,13 @@ public class SistemaGestionPeaje {
         }
         return bonificacion.aplicarDescuento(montoBase, vehiculo, puesto, transitosAnteriores);
     }
+
+    public Puesto buscarPuestoPorNombre(String nombrePuesto) {
+        for (Puesto puesto : puestos) {
+            if (puesto.getNombre().equals(nombrePuesto)) {
+                return puesto;
+            }
+        }
+        return null;
+    }
 }
