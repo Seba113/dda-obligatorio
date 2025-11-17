@@ -6,21 +6,35 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
 
 import dda.obligatorio.modelo.Bonificacion;
 import dda.obligatorio.modelo.Fachada;
 import dda.obligatorio.modelo.Propietario;
 import dda.obligatorio.modelo.Puesto;
 import dda.obligatorio.modelo.Asignacion;
+import observador.Observable;
+import observador.Observador;
+import org.springframework.beans.factory.annotation.Autowired;
+import dda.obligatorio.ConexionNavegador;
 
 @RestController
 @RequestMapping("/asignar-bonificaciones")
-public class ControladorAsignarBonificaciones {
+public class ControladorAsignarBonificaciones implements Observador {
 
     private Fachada fachada = Fachada.getInstancia();
+    @Autowired private ConexionNavegador conexionNavegador;
+    private String cedulaSesion;
+
+    @GetMapping(value = "/registrarSSE", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter registrarSSE() {
+        conexionNavegador.conectarSSE();
+        return conexionNavegador.getConexionSSE();
+    }
 
     @PostMapping("/obtenerBonificaciones")
     public List<Respuesta> obtenerBonificaciones() {
@@ -52,14 +66,11 @@ public class ControladorAsignarBonificaciones {
             res.add(new Respuesta("error", "No existe un propietario con cédula " + cedula));
             return res;
         }
+        // Registrar este controlador para recibir eventos de este propietario
+        p.agregarObservador(this);
+        this.cedulaSesion = cedula;
 
-        PropietarioDetalle detalle = new PropietarioDetalle(
-            p.getCedula(),
-            p.getNombreCompleto(),
-            p.getEstadoActual().getNombre(),
-            mapAsignaciones(p.getAsignaciones())
-        );
-        res.add(new Respuesta("propietario", detalle));
+        res.addAll(construirVistaAsignar(p));
         return res;
     }
 
@@ -89,7 +100,20 @@ public class ControladorAsignarBonificaciones {
         p.asignarBonificacionAPuesto(b, pu, new Date());
 
         res.add(new Respuesta("exito", "Bonificación asignada correctamente"));
-        // devolver lista actualizada
+        // devolver snapshot actualizado
+        res.addAll(construirVistaAsignar(p));
+        return res;
+    }
+
+    private List<Respuesta> construirVistaAsignar(Propietario p) {
+        List<Respuesta> res = new ArrayList<>();
+        PropietarioDetalle detalle = new PropietarioDetalle(
+            p.getCedula(),
+            p.getNombreCompleto(),
+            p.getEstadoActual().getNombre(),
+            mapAsignaciones(p.getAsignaciones())
+        );
+        res.add(new Respuesta("propietario", detalle));
         res.add(new Respuesta("asignaciones", mapAsignaciones(p.getAsignaciones())));
         return res;
     }
@@ -131,6 +155,19 @@ public class ControladorAsignarBonificaciones {
             this.bonificacion = bonificacion;
             this.puesto = puesto;
             this.fecha = fecha;
+        }
+    }
+
+    @Override
+    public void actualizar(Object evento, Observable origen) {
+        try {
+            if (!(evento instanceof Propietario.Eventos)) return;
+            if (cedulaSesion == null) return;
+            Propietario p = fachada.buscarPropietario(cedulaSesion);
+            if (p == null) return;
+            conexionNavegador.enviarJSON(construirVistaAsignar(p));
+        } catch (Exception e) {
+            // Silencioso
         }
     }
 }

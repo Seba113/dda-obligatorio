@@ -7,12 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.http.MediaType;
 
 import jakarta.servlet.http.HttpSession;
-
+import observador.Observable;
+import observador.Observador;
+import dda.obligatorio.ConexionNavegador;
 import dda.obligatorio.dtos.DTOBonificacion;
 import dda.obligatorio.dtos.DTONotificacion;
 import dda.obligatorio.dtos.DTOResumenPropietario;
@@ -26,10 +34,24 @@ import dda.obligatorio.modelo.Transito;
 import dda.obligatorio.modelo.Vehiculo;
 
 @RestController
-public class ControladorPropietario {
-    private Fachada fachada = Fachada.getInstancia();
+@RequestMapping("/propietario")
+@Scope("session")
+public class ControladorPropietario implements Observador {
 
-    @PostMapping("/propietario/tablero")
+    private final ConexionNavegador conexionNavegador;
+    private Fachada fachada = Fachada.getInstancia();
+    private String cedulaSesion;
+
+    public ControladorPropietario(@Autowired ConexionNavegador conexionNavegador) {
+        this.conexionNavegador = conexionNavegador;
+    }
+    @GetMapping(value = "/registrarSSE", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter registrarSSE() {
+        conexionNavegador.conectarSSE();
+        return conexionNavegador.getConexionSSE(); 
+    }
+
+    @PostMapping("/tablero")
     public List<Respuesta> obtenerTableroPropietario(HttpSession sesionHttp, @RequestParam(required = false) String cedula) {
         List<Respuesta> respuestas = new ArrayList<>();
 
@@ -41,11 +63,18 @@ public class ControladorPropietario {
             }
             cedula = sesionProp.getCedula();
         }
+        this.cedulaSesion = cedula;
 
         Propietario propietario = fachada.buscarPropietario(cedula);
         if (propietario == null) {
             respuestas.add(new Respuesta("error", "Propietario no encontrado"));
             return respuestas;
+        }
+        // Registrar este controlador como observador (idempotente)
+        try {
+            propietario.agregarObservador(this);
+        } catch (Exception e) {
+            // Ignorar problemas de registro
         }
 
         // Resumen
@@ -136,7 +165,7 @@ public class ControladorPropietario {
         return lista;
     }
 
-    @PostMapping("/propietario/borrarNotificaciones")
+    @PostMapping("/borrarNotificaciones")
     public List<Respuesta> borrarNotificaciones(HttpSession sesionHttp, @RequestParam(required = false) String cedula) {
         Propietario sesionProp = (Propietario) sesionHttp.getAttribute("usuarioPropietario");
         if (sesionProp == null) {
@@ -170,5 +199,37 @@ public class ControladorPropietario {
         }
 
         return notificaciones;
+    }
+
+    @Override
+    public void actualizar(Object evento, Observable origen) {
+        try {
+            // Solo reaccionar a eventos del propietario
+            if (!(evento instanceof Propietario.Eventos)) return;
+            if (cedulaSesion == null) return;
+
+            // Armar el snapshot del tablero para esta sesión
+            Propietario propietario = fachada.buscarPropietario(cedulaSesion);
+            if (propietario == null) return;
+
+            List<Respuesta> respuestas = new ArrayList<>();
+
+            DTOResumenPropietario resumen = new DTOResumenPropietario(
+                propietario.getNombreCompleto(),
+                propietario.getEstadoActual().getNombre(),
+                propietario.getSaldoActual()
+            );
+            respuestas.add(new Respuesta("resumen", resumen));
+
+            respuestas.add(new Respuesta("bonificaciones", obtenerBonificaciones(propietario)));
+            respuestas.add(new Respuesta("vehiculos", obtenerVehiculosRegistrados(propietario, cedulaSesion)));
+            respuestas.add(new Respuesta("transitos", obtenerTransitosRealizados(cedulaSesion)));
+            respuestas.add(new Respuesta("notificaciones", obtenerNotificacionesPropietario(propietario)));
+            respuestas.add(new Respuesta("exito", "Datos actualizados"));
+
+            conexionNavegador.enviarJSON(respuestas);
+        } catch (Exception e) {
+            // Ignorar errores para no romper SSE
+        }
     }
 }

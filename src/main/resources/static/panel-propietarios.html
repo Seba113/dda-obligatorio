@@ -72,14 +72,21 @@
     </div>
     
 </body>
-<script src="vistaWeb.js"></script>
+<!-- IMPORTANTE: sse.js debe cargarse ANTES de vistaWeb.js -->
+<script src="sse.js"></script>
 <script src="utilesVista.js"></script>
+<script src="vistaWeb.js"></script>
 <script>
-    // Iniciar la vista automáticamente (vistaWeb.js usa urlIniciarVista)
+    
     var urlIniciarVista = "/propietario/tablero";
     var parametrosInicioVista = "";
+    var urlRegistroSSE = "/propietario/registrarSSE";
 
     const URL_SALIR = "acceso/logoutPeaje";
+
+    function procesarMensajeSSE(mensaje) {
+        procesarResultadosSubmit(mensaje);
+    }
 
     // Helper para formatear datos antes de pasarlos a crearTablaDesdeJson
     function formatearDatos(lista, tipo) {

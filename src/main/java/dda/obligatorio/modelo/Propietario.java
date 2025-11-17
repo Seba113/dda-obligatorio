@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import observador.Observable;
+
 public class Propietario extends Usuario {
 
     private double saldoActual;
@@ -13,6 +15,16 @@ public class Propietario extends Usuario {
     private List<Asignacion> asignaciones;
     private List<Notificacion> notificaciones;
     private List<Transito> transitos;
+    private transient Observable observable = new Observable();
+
+    // Eventos de dominio simples para Observer
+    public enum Eventos {
+        CAMBIO_ESTADO,
+        CAMBIO_SALDO,
+        CAMBIO_NOTIFICACIONES,
+        CAMBIO_ASIGNACIONES,
+        CAMBIO_TRANSITO
+    }
 
     public Propietario(String cedula, String contrasena, String nombreCompleto, 
                       double saldoActual, double saldoMinimo) {
@@ -53,6 +65,7 @@ public class Propietario extends Usuario {
     
     public void setEstadoActual(EstadoPropietario estadoActual) {
         this.estadoActual = estadoActual;
+        observable.avisar(Eventos.CAMBIO_ESTADO);
     }
     
     public List<Vehiculo> getVehiculos() {
@@ -93,6 +106,7 @@ public class Propietario extends Usuario {
 
     public void agregarAsignacion(Asignacion asignacion) {
         this.asignaciones.add(asignacion);
+        observable.avisar(Eventos.CAMBIO_ASIGNACIONES);
     }
 
     public void asignarBonificacionAPuesto(Bonificacion bonificacion, Puesto puesto, Date fecha) {
@@ -109,14 +123,17 @@ public class Propietario extends Usuario {
         } else {
             agregarAsignacion(new Asignacion(fecha, bonificacion, puesto));
         }
+        observable.avisar(Eventos.CAMBIO_ASIGNACIONES);
     }
 
     public void agregarNotificacion(Notificacion notificacion) {
         this.notificaciones.add(notificacion);
+        observable.avisar(Eventos.CAMBIO_NOTIFICACIONES);
     }
 
     public void agregarTransito(Transito transito) {
         this.transitos.add(transito);
+        observable.avisar(Eventos.CAMBIO_TRANSITO);
     }
 
     public boolean tieneSaldoSuficiente(double monto) {
@@ -130,6 +147,7 @@ public class Propietario extends Usuario {
             if (this.saldoActual < this.saldoMinimo) {
                 generarAlertaSaldo();
             }
+            observable.avisar(Eventos.CAMBIO_SALDO);
             return true;
         }
         return false;
@@ -137,6 +155,7 @@ public class Propietario extends Usuario {
 
     public void recargarSaldo(double monto) {
         this.saldoActual += monto;
+        observable.avisar(Eventos.CAMBIO_SALDO);
     }
 
     private void generarAlertaSaldo() {
@@ -179,6 +198,7 @@ public class Propietario extends Usuario {
 
     public void limpiarNotificaciones() {
         this.notificaciones.clear();
+        observable.avisar(Eventos.CAMBIO_NOTIFICACIONES);
     }
 
     public Vehiculo buscarVehiculoPorMatricula(String matricula) {
@@ -188,6 +208,15 @@ public class Propietario extends Usuario {
             }
         }
         return null;
+    }
+
+    // Observer facade methods
+    public void agregarObservador(observador.Observador obs) {
+         observable.agregarObservador(obs); 
+    }
+
+    public void quitarObservador(observador.Observador obs) {
+         observable.quitarObservador(obs); 
     }
 
     @Override

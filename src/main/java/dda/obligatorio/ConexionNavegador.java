@@ -7,6 +7,7 @@ package dda.obligatorio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -16,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 
 @Component
-@Scope("session")
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ConexionNavegador  {
 
     private SseEmitter conexionSSE;
@@ -25,9 +26,7 @@ public class ConexionNavegador  {
         if (conexionSSE != null) { //si hay hay una conexion la cierro
             cerrarConexion();
         }
-        long timeOut = 30 * 60 * 1000; //30 minutos de timeOut (igual al valor por defecto de la sesion)
-        conexionSSE = new SseEmitter(timeOut);
-        
+        conexionSSE = new SseEmitter();
     }
     public void cerrarConexion(){
         try{
