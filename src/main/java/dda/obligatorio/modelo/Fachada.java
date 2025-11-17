@@ -101,6 +101,10 @@ public class Fachada {
     public Puesto buscarPuestoPorNombre(String nombrePuesto) {
         return sistemaPeaje.buscarPuestoPorNombre(nombrePuesto);
     }
+    
+    public Bonificacion buscarBonificacionPorNombre(String nombreBonificacion) {
+        return sistemaPeaje.buscarBonificacionPorNombre(nombreBonificacion);
+    }
         
 
     public void logout(Usuario u) {

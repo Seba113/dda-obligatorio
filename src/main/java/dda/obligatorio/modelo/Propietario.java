@@ -95,6 +95,22 @@ public class Propietario extends Usuario {
         this.asignaciones.add(asignacion);
     }
 
+    public void asignarBonificacionAPuesto(Bonificacion bonificacion, Puesto puesto, Date fecha) {
+        Asignacion existente = null;
+        for (Asignacion a : asignaciones) {
+            if (a.getPuesto().equals(puesto)) {
+                existente = a;
+                break;
+            }
+        }
+        if (existente != null) {
+            existente.setBonificacion(bonificacion);
+            existente.setFechaAsignacion(fecha);
+        } else {
+            agregarAsignacion(new Asignacion(fecha, bonificacion, puesto));
+        }
+    }
+
     public void agregarNotificacion(Notificacion notificacion) {
         this.notificaciones.add(notificacion);
     }

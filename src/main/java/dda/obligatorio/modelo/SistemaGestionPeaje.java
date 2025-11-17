@@ -58,4 +58,13 @@ public class SistemaGestionPeaje {
         }
         return null;
     }
+
+    public Bonificacion buscarBonificacionPorNombre(String nombreBonificacion) {
+        for (Bonificacion b : bonificaciones) {
+            if (b.getNombre().equals(nombreBonificacion)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

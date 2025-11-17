@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <title>Asignar bonificaciones</title>
+    <link rel="stylesheet" href="asignar-bonificaciones.css">
+    <script src="utilesVista.js"></script>
+    <script src="vistaWeb.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Asignar Bonificaciones</h1>
+            <p>Sistema de gestión de bonificaciones para propietarios</p>
+        </div>
+
+        <div class="content">
+            <div id="alertContainer"></div>
+
+            <!-- Sección de Búsqueda -->
+            <div class="section">
+                <h2 class="section-title">🔍 Buscar Propietario</h2>
+                <div class="search-box">
+                    <div class="input-group">
+                        <label for="cedula">Cédula de Identidad</label>
+                        <input type="text" id="cedula" placeholder="Ej: 12345678">
+                    </div>
+                    <button class="btn btn-primary" onclick="buscarPropietario()">Buscar propietario</button>
+                </div>
+            </div>
+
+            <!-- Información del Propietario -->
+            <div id="ownerInfo" class="owner-info" style="display:none;">
+                <div class="owner-detail">
+                    <strong>Nombre:</strong>
+                    <span id="ownerName">-</span>
+                </div>
+                <div class="owner-detail">
+                    <strong>Estado:</strong>
+                    <span id="ownerStatus"></span>
+                </div>
+                <div class="owner-detail">
+                    <strong>Bonificaciones asignadas:</strong>
+                    <div id="assignmentsList" class="assignments-list"></div>
+                </div>
+            </div>
+
+            <!-- Sección de Asignación -->
+            <div id="assignmentSection" class="section" style="display: none;">
+                <h2 class="section-title">➕ Asignar nueva bonificación</h2>
+
+                <div class="selection-grid">
+                    <div class="input-group">
+                        <label for="bonificacionSelect">Bonificación</label>
+                        <div id="bonificacionSelect"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="puestoSelect">Puesto</label>
+                        <div id="puestoSelect"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" onclick="asignarBonificacion()">
+                    Asignar bonificación
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let propietarioActual = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar listas
+            submit('/asignar-bonificaciones/obtenerBonificaciones', '');
+            submit('/asignar-bonificaciones/obtenerPuestos', '');
+        });
+
+        function buscarPropietario() {
+            const cedula = document.getElementById('cedula').value.trim();
+            if (!cedula) { mostrar_error('Ingrese una cédula válida'); return; }
+            submit('/asignar-bonificaciones/buscarPropietario', 'cedula=' + encodeURIComponent(cedula));
+        }
+
+        function asignarBonificacion() {
+            if (!propietarioActual) return;
+            const bonSel = document.getElementById('bonificacion');
+            const pueSel = document.getElementById('puesto');
+            if (!bonSel || bonSel.value === '-1') { mostrar_error('Seleccione una bonificación'); return; }
+            if (!pueSel || pueSel.value === '-1') { mostrar_error('Seleccione un puesto'); return; }
+
+            const data = 'cedula=' + encodeURIComponent(propietarioActual.cedula) +
+                         '&bonificacion=' + encodeURIComponent(bonSel.value) +
+                         '&puesto=' + encodeURIComponent(pueSel.value);
+            submit('/asignar-bonificaciones/asignar', data);
+        }
+
+        // Handlers de respuestas
+        function mostrar_bonificaciones(lista) {
+            const html = crearListaDesdeJson({
+                data: lista.map(n => ({ nombre: n })),
+                campoMostrar: 'nombre',
+                campoValor: 'nombre',
+                id: 'bonificacion',
+                mostrarOpcionInicial: true
+            });
+            document.getElementById('bonificacionSelect').innerHTML = html;
+        }
+
+        function mostrar_puestos(lista) {
+            const html = crearListaDesdeJson({
+                data: lista.map(n => ({ nombre: n })),
+                campoMostrar: 'nombre',
+                campoValor: 'nombre',
+                id: 'puesto',
+                mostrarOpcionInicial: true
+            });
+            document.getElementById('puestoSelect').innerHTML = html;
+        }
+
+        function mostrar_propietario(detalle) {
+            propietarioActual = detalle;
+            document.getElementById('ownerName').textContent = detalle.nombre;
+            document.getElementById('ownerStatus').textContent = detalle.estado;
+            document.getElementById('ownerInfo').style.display = 'block';
+            document.getElementById('assignmentSection').style.display = 'block';
+            renderAsignaciones(detalle.asignaciones);
+        }
+
+        function mostrar_asignaciones(lista) {
+            renderAsignaciones(lista);
+        }
+
+        function renderAsignaciones(lista) {
+            const html = Array.isArray(lista) && lista.length > 0
+                ? crearTablaDesdeJson(lista)
+                : '<em>Sin asignaciones</em>';
+            document.getElementById('assignmentsList').innerHTML = html;
+        }
+
+        function mostrar_exito(msg) {
+            mostrarMensaje(msg);
+        }
+
+        function mostrar_error(msg) {
+            // Render simple en el contenedor de alertas
+            const c = document.getElementById('alertContainer');
+            c.innerHTML = '<div class="error">' + msg + '</div>';
+        }
+
+        function procesarErrorSubmit(status, text) {
+            mostrar_error('Error ' + status + ': ' + text);
+        }
+    </script>
+</body>
+
+</html>
