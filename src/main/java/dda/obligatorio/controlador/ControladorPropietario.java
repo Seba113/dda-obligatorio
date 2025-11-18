@@ -70,14 +70,12 @@ public class ControladorPropietario implements Observador {
             respuestas.add(new Respuesta("error", "Propietario no encontrado"));
             return respuestas;
         }
-        // Registrar este controlador como observador (idempotente)
-        try {
+        
+    
             propietario.agregarObservador(this);
-        } catch (Exception e) {
-            // Ignorar problemas de registro
-        }
+        
 
-        // Resumen
+        
         DTOResumenPropietario resumen = new DTOResumenPropietario(
             propietario.getNombreCompleto(),
             propietario.getEstadoActual().getNombre(),
@@ -185,6 +183,20 @@ public class ControladorPropietario implements Observador {
         }
     }
 
+    @PostMapping("/cerrar")
+    public List<Respuesta> cerrarVista(HttpSession sesionHttp) {
+        try {
+            Propietario sesionProp = (Propietario) sesionHttp.getAttribute("usuarioPropietario");
+            if (sesionProp != null) {
+                try { sesionProp.quitarObservador(this); } catch (Exception e) {}
+            }
+            try { conexionNavegador.cerrarConexion(); } catch (Exception e) {}
+        } catch (Exception e) {
+            // silencioso
+        }
+        return Respuesta.lista(new Respuesta("exito", "Vista cerrada"));
+    }
+
     private List<DTONotificacion> obtenerNotificacionesPropietario(Propietario propietario) {
         List<DTONotificacion> notificaciones = new ArrayList<>();
         List<Notificacion> notifsOriginales = new ArrayList<>(propietario.getNotificaciones());
@@ -203,14 +215,9 @@ public class ControladorPropietario implements Observador {
 
     @Override
     public void actualizar(Object evento, Observable origen) {
-        try {
-            // Solo reaccionar a eventos del propietario
-            if (!(evento instanceof Propietario.Eventos)) return;
-            if (cedulaSesion == null) return;
+        
 
-            // Armar el snapshot del tablero para esta sesión
             Propietario propietario = fachada.buscarPropietario(cedulaSesion);
-            if (propietario == null) return;
 
             List<Respuesta> respuestas = new ArrayList<>();
 
@@ -228,8 +235,7 @@ public class ControladorPropietario implements Observador {
             respuestas.add(new Respuesta("exito", "Datos actualizados"));
 
             conexionNavegador.enviarJSON(respuestas);
-        } catch (Exception e) {
-            // Ignorar errores para no romper SSE
-        }
+            System.out.println("mensaje enviado");
+        
     }
 }

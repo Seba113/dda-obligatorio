@@ -3,11 +3,13 @@ package dda.obligatorio.modelo;
 import java.util.List;
 import java.util.ArrayList;
 
+import observador.Observable;
+
 /**
  * Clase Fachada que implementa el patrón Facade para proporcionar una interfaz unificada
  * a los subsistemas de gestión del peaje.
  */
-public class Fachada {
+public class Fachada extends Observable{
     private static Fachada instancia;
     private final SistemaGestionAcceso sistemaAcceso;
     private final SistemaGestionPeaje sistemaPeaje;

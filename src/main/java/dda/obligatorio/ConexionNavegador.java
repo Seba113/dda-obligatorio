@@ -22,11 +22,11 @@ public class ConexionNavegador  {
 
     private SseEmitter conexionSSE;
 
-    public void conectarSSE() {
+    public SseEmitter conectarSSE() {
         if (conexionSSE != null) { //si hay hay una conexion la cierro
             cerrarConexion();
         }
-        conexionSSE = new SseEmitter();
+        return conexionSSE = new SseEmitter(30L * 60L * 1000L);
     }
     public void cerrarConexion(){
         try{

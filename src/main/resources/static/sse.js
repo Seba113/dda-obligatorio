@@ -29,18 +29,18 @@ function registrarSSE(){
         };
         //ERROR EN LA CONEXION CON EL SERVIDOR
         eventSource.onerror = function (event) {
-            
-            //En todos los casos se cierra el event source
-            eventSource.close();
-             try {
-                conexionSSECerrada(event);//Metodo que puede estar definido en la pagina que incluya esta lib 
-                                          //para personalizar el manejo del error en la conexion SSE   
+            // Cerrar la conexión actual
+            try { eventSource.close(); } catch(e) {}
+            // Si la página define un manejador, usarlo
+            try {
+                conexionSSECerrada(event);//Metodo opcional definido por la pagina
             } catch (e) {
-                //por defecto se "borra" la pagina
-                document.body.innerHTML = '';    
+                // Comportamiento por defecto: intentar reconectar automáticamente
+                // Evitar borrar la página; reconectar en 3 segundos
+                setTimeout(function(){
+                    try { registrarSSE(); } catch(e) {}
+                }, 3000);
             }
-            
-            
         };
           
     }
@@ -48,5 +48,6 @@ function registrarSSE(){
 //Por defecto se asume que los mensajes se reciven via SSE tienen el mismo formato que las respuestas
 //del submit. 
 function procesarMensajeSSE(mensaje){
+    alert("Mensaje recibido desde el servidor via SSE");
         procesarResultadosSubmit(mensaje);
 }

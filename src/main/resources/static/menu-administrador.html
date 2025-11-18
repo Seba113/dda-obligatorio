@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administracion</title>
     <link rel="stylesheet" href="administracion.css">
-    <script src='vistaWeb.js'></script>
+    <!-- Orden recomendado: utilidades -> sse -> vistaWeb (submit depende de primerSubmitFinalizado) -->
+    <script src="utilesVista.js"></script>
     <script src='sse.js'></script>
+    <script src='vistaWeb.js'></script>
 </head>
 <body>
-    <script src='utilesVista.js'></script>
     <div class="sidebar">
         <label id="nombreCompleto"> </label>
         <button onclick="cargarContenido('emular-transito.html')">Emular transito</button>
@@ -22,16 +23,16 @@
     </div>
     <script>
 
-        urlIniciarVista="/menu/vistaConectada";
+        urlIniciarVista="/menu-administracion/vistaConectada";
         urlCierreVista="/acceso/logoutAdministrador";
-        urlRegistroSSE = "/administrador/registrarSSE";
+        urlRegistroSSE = "/menu-administracion/registrarSSE";
 
         
         const spnNombreCompleto = document.getElementById("nombreCompleto");
 
-        function cargarContenido(pagina) {
-            document.getElementById('contenidoFrame').src = pagina;
-        }
+        function cargarContenido(pagina) 
+            { contenidoFrame.src = pagina; }
+        
         function mostrar_nombreCompleto(nombreCompleto){
           spnNombreCompleto.innerHTML = "ADMINISTRADOR: " + nombreCompleto.toUpperCase();
         }

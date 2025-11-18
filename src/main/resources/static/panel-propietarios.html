@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Propietarios</title>
     <link rel="stylesheet" href="panel-propietarios.css">
+    <script src="vistaWeb.js"></script>
 </head>
+
 <body>
+    <script src="sse.js"></script>
+    <script src="utilesVista.js"></script>
     <div class="container">
         <!-- Header -->
         <div class="header">
             <h1 id="titulo">📊 Tablero de control del propietario</h1>
             <button class="btn-salir" onclick="salir()">Salir</button>
         </div>
-        
+
         <!-- Resumen del propietario -->
         <div class="section">
             <div class="section-title">Resumen del propietario</div>
@@ -32,7 +37,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Grid: Bonificaciones y Vehículos -->
         <div class="grid-2col">
             <!-- Bonificaciones asignadas -->
@@ -42,7 +47,7 @@
                     <tbody id="tablaBonificaciones"></tbody>
                 </table>
             </div>
-            
+
             <!-- Vehículos registrados -->
             <div class="section">
                 <div class="section-title">Vehículos registrados</div>
@@ -51,7 +56,7 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Tránsitos realizados -->
         <div class="section">
             <div class="section-title">Tránsitos realizados</div>
@@ -59,47 +64,45 @@
                 <tbody id="tablaTransitos"></tbody>
             </table>
         </div>
-        
+
         <!-- Notificaciones del sistema -->
         <div class="section">
             <div class="notificaciones-header">
                 <div class="section-title" style="margin: 0; padding: 0; border: none;">Notificaciones del sistema</div>
-                
+
             </div>
             <div id="listaNotificaciones"></div>
             <button class="btn-borrar" onclick="borrarNotificaciones()">Borrar notificaciones</button>
         </div>
     </div>
-    
+
+
 </body>
-<!-- IMPORTANTE: sse.js debe cargarse ANTES de vistaWeb.js -->
-<script src="sse.js"></script>
-<script src="utilesVista.js"></script>
-<script src="vistaWeb.js"></script>
+
+
+
 <script>
-    
+
     var urlIniciarVista = "/propietario/tablero";
     var parametrosInicioVista = "";
     var urlRegistroSSE = "/propietario/registrarSSE";
+    var urlCierreVista = "/propietario/cerrar";
 
     const URL_SALIR = "acceso/logoutPeaje";
 
-    function procesarMensajeSSE(mensaje) {
-        procesarResultadosSubmit(mensaje);
-    }
 
     // Helper para formatear datos antes de pasarlos a crearTablaDesdeJson
     function formatearDatos(lista, tipo) {
         if (!Array.isArray(lista)) return [];
-        
-        switch(tipo) {
+
+        switch (tipo) {
             case 'bonificaciones':
                 return lista.map(b => ({
                     bonificacion: b.nombreBonificacion || '',
                     puesto: b.nombrePuesto || '',
                     fechaAsignada: b.fechaAsignada ? new Date(b.fechaAsignada).toLocaleDateString() : ''
                 }));
-            
+
             case 'vehiculos':
                 return lista.map(v => ({
                     matricula: v.matricula || '',
@@ -108,7 +111,7 @@
                     transitos: v.cantidadTransitos || 0,
                     montoTotal: '$ ' + Number(v.montoTotal || 0).toFixed(2)
                 }));
-            
+
             case 'transitos':
                 return lista.map(t => ({
                     puesto: t.puesto || '',
@@ -121,7 +124,7 @@
                     fecha: t.fecha ? new Date(t.fecha).toLocaleDateString() : '',
                     hora: t.hora || ''
                 }));
-            
+
             default:
                 return lista;
         }
@@ -138,7 +141,7 @@
     function mostrar_bonificaciones(lista) {
         const tbody = document.getElementById('tablaBonificaciones');
         const datosFormateados = formatearDatos(lista, 'bonificaciones');
-        tbody.innerHTML = datosFormateados.length > 0 
+        tbody.innerHTML = datosFormateados.length > 0
             ? crearTablaDesdeJson(datosFormateados)
             : '<tr><td colspan="3" class="empty-message">No hay bonificaciones asignadas.</td></tr>';
     }
@@ -146,7 +149,7 @@
     function mostrar_vehiculos(lista) {
         const tbody = document.getElementById('tablaVehiculos');
         const datosFormateados = formatearDatos(lista, 'vehiculos');
-        tbody.innerHTML = datosFormateados.length > 0 
+        tbody.innerHTML = datosFormateados.length > 0
             ? crearTablaDesdeJson(datosFormateados)
             : '<tr><td colspan="5" class="empty-message">No hay vehículos registrados.</td></tr>';
     }
@@ -154,7 +157,7 @@
     function mostrar_transitos(lista) {
         const tbody = document.getElementById('tablaTransitos');
         const datosFormateados = formatearDatos(lista, 'transitos');
-        tbody.innerHTML = datosFormateados.length > 0 
+        tbody.innerHTML = datosFormateados.length > 0
             ? crearTablaDesdeJson(datosFormateados)
             : '<tr><td colspan="9" class="empty-message">No hay tránsitos para mostrar.</td></tr>';
     }
@@ -189,6 +192,13 @@
         window.location.href = url || '/login-propietarios';
     }
 
+
+    function procesarErrorSubmit(status, text) {
+        if (status === 400) {
+            window.location.href = 'login-propietarios.html';
+        }
+    }
+
     function salir() {
         submit(URL_SALIR, '');
     }
@@ -201,4 +211,5 @@
     window.borrarNotificaciones = borrarNotificaciones;
     window.salir = salir;
 </script>
+
 </html>
