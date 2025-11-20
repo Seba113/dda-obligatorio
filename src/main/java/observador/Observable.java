@@ -14,6 +14,7 @@ public class Observable {
         if(!observadores.contains(obs)){
             observadores.add(obs);
         }
+        System.out.println("Observadores: " + observadores.size());
     }
     public void quitarObservador(Observador obs){
         observadores.remove(obs);
@@ -23,5 +24,6 @@ public class Observable {
         for(Observador obs:copia){
             obs.actualizar(evento, this);
         }
+
     }
 }

@@ -7,7 +7,6 @@ package dda.obligatorio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -17,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 
 @Component
-@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope("session")
 public class ConexionNavegador  {
 
     private SseEmitter conexionSSE;

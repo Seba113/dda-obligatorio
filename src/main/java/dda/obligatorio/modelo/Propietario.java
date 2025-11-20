@@ -15,7 +15,7 @@ public class Propietario extends Usuario  {
     private List<Asignacion> asignaciones;
     private List<Notificacion> notificaciones;
     private List<Transito> transitos;
-    private transient Observable observable = new Observable();
+    private Observable observable = new Observable();
 
     public enum Eventos {
         CAMBIO_ESTADO,
@@ -219,6 +219,7 @@ public class Propietario extends Usuario  {
 
     public void agregarObservador(observador.Observador obs) {
          observable.agregarObservador(obs); 
+         System.out.println("usuario" + getCedula()+ hashCode());
     }
 
     public void quitarObservador(observador.Observador obs) {

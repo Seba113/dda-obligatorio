@@ -185,15 +185,13 @@ public class ControladorPropietario implements Observador {
 
     @PostMapping("/cerrar")
     public List<Respuesta> cerrarVista(HttpSession sesionHttp) {
-        try {
+        
             Propietario sesionProp = (Propietario) sesionHttp.getAttribute("usuarioPropietario");
             if (sesionProp != null) {
                 try { sesionProp.quitarObservador(this); } catch (Exception e) {}
             }
             try { conexionNavegador.cerrarConexion(); } catch (Exception e) {}
-        } catch (Exception e) {
-            // silencioso
-        }
+        
         return Respuesta.lista(new Respuesta("exito", "Vista cerrada"));
     }
 

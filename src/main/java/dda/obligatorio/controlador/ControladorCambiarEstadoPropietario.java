@@ -16,10 +16,13 @@ import dda.obligatorio.modelo.Propietario;
 import observador.Observable;
 import observador.Observador;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+
 import dda.obligatorio.ConexionNavegador;
 
 @RestController
 @RequestMapping("/cambiar-estado")
+@Scope("session")
 public class ControladorCambiarEstadoPropietario implements Observador {
 
     private Fachada fachada = Fachada.getInstancia();

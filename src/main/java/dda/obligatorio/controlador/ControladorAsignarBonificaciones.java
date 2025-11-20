@@ -20,10 +20,13 @@ import dda.obligatorio.modelo.Asignacion;
 import observador.Observable;
 import observador.Observador;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+
 import dda.obligatorio.ConexionNavegador;
 
 @RestController
 @RequestMapping("/asignar-bonificaciones")
+@Scope("session")
 public class ControladorAsignarBonificaciones implements Observador {
 
     private Fachada fachada = Fachada.getInstancia();
